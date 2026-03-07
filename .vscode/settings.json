@@ -41,5 +41,9 @@
   },
   "[vue]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+
+  "liveServer.settings.NoBrowser": false,
+  "liveServer.settings.host": "127.0.0.1",
+  "liveServer.settings.cors": true
 }

@@ -25,8 +25,8 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
   const editEnabled = useEditorSettingStore(state => state.editEnabled);
   const { deleteTarget, setDeleteTarget, handleDelete, cancelDelete, isConfirmOpen } =
     useDeleteConfirm();
-  const destinySystem = data.命定系统;
-  const partners = destinySystem?.关系列表;
+  const destinyPoints = data.命运点数;
+  const partners = data.关系列表;
 
   /**
    * 处理 FP 商店按钮点击
@@ -67,6 +67,16 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
         return value.length > 0 ? value.join(' / ') : '无';
       }
       if (type === 'toggle') return value ? '是' : '否';
+      if (type === 'keyvalue') {
+        if (_.isEmpty(value)) return '无';
+        return _.map(value as Record<string, unknown>, (effectValue, effectKey) => {
+          const displayValue =
+            effectValue === undefined || effectValue === null || effectValue === ''
+              ? '无'
+              : String(effectValue);
+          return `${effectKey}: ${displayValue}`;
+        }).join(' / ');
+      }
       if (value === '') return '无';
       return String(value);
     };
@@ -79,7 +89,15 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
             path={path}
             value={
               value ??
-              (type === 'number' ? 0 : type === 'toggle' ? false : type === 'tags' ? [] : '')
+              (type === 'number'
+                ? 0
+                : type === 'toggle'
+                  ? false
+                  : type === 'tags'
+                    ? []
+                    : type === 'keyvalue'
+                      ? {}
+                      : '')
             }
             type={type}
             {...config}
@@ -138,8 +156,8 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
   ) => {
     if (_.isEmpty(items)) return null;
 
-    const itemType = title === '装备' ? '装备' : '技能';
-    const itemCategory = title === '装备' ? 'equipment' : 'skill';
+    const itemType = title === '装备' ? '装备' : title === '背包' ? '背包' : '技能';
+    const itemCategory = title === '装备' ? 'equipment' : title === '背包' ? 'item' : 'skill';
 
     return (
       <div className={title === '装备' ? styles.partnerEquipment : styles.partnerSkills}>
@@ -152,11 +170,11 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
               data={item}
               titleSuffix={getTitleSuffix(item)}
               editEnabled={editEnabled}
-              pathPrefix={`命定系统.关系列表.${partnerName}.${itemType}.${name}`}
+              pathPrefix={`关系列表.${partnerName}.${itemType}.${name}`}
               onDelete={() =>
                 setDeleteTarget({
                   type: itemType,
-                  path: `命定系统.关系列表.${partnerName}.${itemType}.${name}`,
+                  path: `关系列表.${partnerName}.${itemType}.${name}`,
                   name,
                 })
               }
@@ -164,6 +182,71 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
             />
           ))}
         </div>
+      </div>
+    );
+  };
+
+  const renderStatusEffectsSection = (
+    effects: Record<string, Record<string, any>> | undefined,
+    partnerName: string,
+  ) => {
+    if (_.isEmpty(effects) && !editEnabled) return null;
+
+    return (
+      <div className={styles.partnerSkills}>
+        <div className={styles.sectionLabel}>状态效果</div>
+        {editEnabled ? (
+          <EditableField
+            path={`关系列表.${partnerName}.状态效果`}
+            value={effects ?? {}}
+            type="keyvalue"
+          />
+        ) : _.isEmpty(effects) ? (
+          <span className={styles.traitValue}>无</span>
+        ) : (
+          <div className={styles.skillList}>
+            {_.map(effects, (effect, effectName) => (
+              <Collapse
+                key={effectName}
+                title={
+                  <div className={styles.partnerTitle}>
+                    <IconTitle text={effectName} className={styles.partnerName} />
+                    <div className={styles.partnerTags}>
+                      <span className={styles.tag}>{effect?.类型 ?? '增益'}</span>
+                      {(effect?.层数 ?? 0) > 0 && (
+                        <span className={styles.tag}>层数 {effect?.层数 ?? 1}</span>
+                      )}
+                    </div>
+                  </div>
+                }
+              >
+                <div className={styles.partnerTraits}>
+                  {renderReadonlyRow(
+                    '效果',
+                    effect?.效果,
+                    styles.traitRow,
+                    styles.traitLabel,
+                    styles.traitValue,
+                  )}
+                  {renderReadonlyRow(
+                    '剩余时间',
+                    effect?.剩余时间,
+                    styles.traitRow,
+                    styles.traitLabel,
+                    styles.traitValue,
+                  )}
+                  {renderReadonlyRow(
+                    '来源',
+                    effect?.来源,
+                    styles.traitRow,
+                    styles.traitLabel,
+                    styles.traitValue,
+                  )}
+                </div>
+              </Collapse>
+            ))}
+          </div>
+        )}
       </div>
     );
   };
@@ -200,7 +283,7 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
                       e.stopPropagation();
                       setDeleteTarget({
                         type: '伙伴',
-                        path: `命定系统.关系列表.${name}`,
+                        path: `关系列表.${name}`,
                         name,
                       });
                     }}
@@ -218,7 +301,7 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
                 <span className={styles.label}>好感度</span>
                 {editEnabled ? (
                   <EditableField
-                    path={`命定系统.关系列表.${name}.好感度`}
+                    path={`关系列表.${name}.好感度`}
                     value={partner.好感度 ?? 0}
                     type="number"
                     numberConfig={{ min: -100, max: 100, step: 1 }}
@@ -234,7 +317,7 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
                   <div className={styles.toggleRow}>
                     <span className={styles.toggleLabel}>在场状态</span>
                     <EditableField
-                      path={`命定系统.关系列表.${name}.在场`}
+                      path={`关系列表.${name}.在场`}
                       value={partner.在场 ?? false}
                       type="toggle"
                       toggleConfig={{ labelOff: '离场', labelOn: '在场', size: 'sm' }}
@@ -243,7 +326,7 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
                   <div className={styles.toggleRow}>
                     <span className={styles.toggleLabel}>命定契约</span>
                     <EditableField
-                      path={`命定系统.关系列表.${name}.命定契约`}
+                      path={`关系列表.${name}.命定契约`}
                       value={partner.命定契约 ?? false}
                       type="toggle"
                       toggleConfig={{ labelOff: '未缔结', labelOn: '已缔结', size: 'sm' }}
@@ -256,7 +339,7 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
               <div className={styles.partnerInfo}>
                 {renderEditableRow(
                   '种族',
-                  `命定系统.关系列表.${name}.种族`,
+                  `关系列表.${name}.种族`,
                   partner.种族,
                   'text',
                   styles.infoRow,
@@ -265,7 +348,7 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
                 )}
                 {renderEditableRow(
                   '身份',
-                  `命定系统.关系列表.${name}.身份`,
+                  `关系列表.${name}.身份`,
                   partner.身份,
                   'tags',
                   styles.infoRow,
@@ -274,7 +357,7 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
                 )}
                 {renderEditableRow(
                   '职业',
-                  `命定系统.关系列表.${name}.职业`,
+                  `关系列表.${name}.职业`,
                   partner.职业,
                   'tags',
                   styles.infoRow,
@@ -302,7 +385,7 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
                 <div className={styles.partnerAppearance}>
                   {renderEditableRow(
                     '外貌',
-                    `命定系统.关系列表.${name}.外貌`,
+                    `关系列表.${name}.外貌`,
                     partner.外貌,
                     'textarea',
                     styles.appearanceRow,
@@ -311,7 +394,7 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
                   )}
                   {renderEditableRow(
                     '着装',
-                    `命定系统.关系列表.${name}.着装`,
+                    `关系列表.${name}.着装`,
                     partner.着装,
                     'textarea',
                     styles.appearanceRow,
@@ -326,7 +409,7 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
                 <div className={styles.partnerTraits}>
                   {renderEditableRow(
                     '性格',
-                    `命定系统.关系列表.${name}.性格`,
+                    `关系列表.${name}.性格`,
                     partner.性格,
                     'textarea',
                     styles.traitRow,
@@ -335,7 +418,7 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
                   )}
                   {renderEditableRow(
                     '喜爱',
-                    `命定系统.关系列表.${name}.喜爱`,
+                    `关系列表.${name}.喜爱`,
                     partner.喜爱,
                     'textarea',
                     styles.traitRow,
@@ -360,7 +443,7 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
                         <span className={styles.attributeKey}>{key}</span>
                         {editEnabled ? (
                           <EditableField
-                            path={`命定系统.关系列表.${name}.属性.${key}`}
+                            path={`关系列表.${name}.属性.${key}`}
                             value={value ?? 0}
                             type="number"
                             numberConfig={{ min: 0, max: 20, step: 1 }}
@@ -373,6 +456,9 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
                   </div>
                 </div>
               )}
+
+              {/* 状态效果 */}
+              {renderStatusEffectsSection(partner.状态效果, name)}
 
               {/* 装备 */}
               {renderItemSection(
@@ -393,12 +479,21 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
                 name,
               )}
 
+              {/* 背包 */}
+              {renderItemSection(
+                '背包',
+                partner.背包,
+                styles.skillList,
+                item => (item.数量 ? <span className={styles.skillCost}>x{item.数量}</span> : null),
+                name,
+              )}
+
               {/* 心里话 */}
               {(partner.心里话 || editEnabled) && (
                 <div className={styles.partnerThoughts}>
                   {renderEditableRow(
                     '心里话',
-                    `命定系统.关系列表.${name}.心里话`,
+                    `关系列表.${name}.心里话`,
                     partner.心里话,
                     'textarea',
                     styles.thoughtsRow,
@@ -413,7 +508,7 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
                 <div className={styles.partnerBackground}>
                   {renderEditableRow(
                     '背景故事',
-                    `命定系统.关系列表.${name}.背景故事`,
+                    `关系列表.${name}.背景故事`,
                     partner.背景故事,
                     'textarea',
                     styles.backgroundRow,
@@ -431,7 +526,7 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
                     data={partner.登神长阶}
                     compact
                     editEnabled={editEnabled}
-                    pathPrefix={`命定系统.关系列表.${name}.登神长阶`}
+                    pathPrefix={`关系列表.${name}.登神长阶`}
                   />
                 </div>
               )}
@@ -458,13 +553,13 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
           <span className={styles.destinyPointsLabel}>命运点数</span>
           {editEnabled ? (
             <EditableField
-              path="命定系统.命运点数"
-              value={destinySystem?.命运点数 ?? 0}
+              path="命运点数"
+              value={destinyPoints ?? 0}
               type="number"
               numberConfig={{ min: 0, step: 1 }}
             />
           ) : (
-            <span className={styles.destinyPointsValue}>{destinySystem?.命运点数 ?? 0}</span>
+            <span className={styles.destinyPointsValue}>{destinyPoints ?? 0}</span>
           )}
         </div>
       </Card>

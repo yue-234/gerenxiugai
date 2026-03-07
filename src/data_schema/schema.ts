@@ -90,6 +90,11 @@ const partners = z
         着装: z.string().prefault(''),
         命定契约: z.boolean().prefault(false),
         好感度: clampedMum(0, -100, 100),
+        状态效果: z.record(z.string(), StatusEffectSchema).prefault({}),
+        背包: z
+          .record(z.string(), InventoryItemSchema)
+          .prefault({})
+          .transform(items => _.pickBy(items, item => item.数量 > 0)),
         心里话: z.string().prefault(''),
         背景故事: z.string().prefault(''),
       })
@@ -112,6 +117,9 @@ const partners = z
           '等级',
           // 属性
           '属性',
+          '状态效果',
+          // 物品
+          '背包',
           // 装备、技能、登神长阶
           '装备',
           '技能',
@@ -169,11 +177,7 @@ export const Schema = z.object({
     .prefault({}),
   任务列表: z.record(z.string(), TaskSchema).prefault({}),
   主角: player.prefault({}),
-  命定系统: z
-    .object({
-      命运点数: minLimitedNum(0, 0),
-      关系列表: partners,
-    })
-    .prefault({}),
+  命运点数: minLimitedNum(0, 0),
+  关系列表: partners,
   新闻: news.prefault({}),
 });

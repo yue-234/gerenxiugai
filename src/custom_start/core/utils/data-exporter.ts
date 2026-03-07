@@ -21,7 +21,7 @@ export async function writeCharacterToMvu(
   const mvuData = Mvu.getMvuData({ type: 'message', message_id: 'latest' });
 
   // 命运点数
-  _.set(mvuData, 'stat_data.命定系统.命运点数', character.destinyPoints);
+  _.set(mvuData, 'stat_data.命运点数', character.destinyPoints);
 
   // 新 schema: 主角.技能
   const skillsData = _.fromPairs(
@@ -137,7 +137,7 @@ export async function writeCharacterToMvu(
       ];
     }),
   );
-  _.set(mvuData, 'stat_data.命定系统.关系列表', relationData);
+  _.set(mvuData, 'stat_data.关系列表', relationData);
 
   // 将更新后的数据写回
   await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: 'latest' });

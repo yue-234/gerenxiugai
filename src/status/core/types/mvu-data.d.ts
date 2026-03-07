@@ -27,12 +27,12 @@ export type PlayerData = StatData['主角'];
 /**
  * 命运点数
  */
-export type DestinyPoints = StatData['命定系统']['命运点数'];
+export type DestinyPoints = StatData['命运点数'];
 
 /**
  * 关系列表信息
  */
-export type Partner = StatData['命定系统']['关系列表'][string];
+export type Partner = StatData['关系列表'][string];
 
 /**
  * 新闻信息
