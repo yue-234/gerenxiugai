@@ -2,7 +2,8 @@
 @use '../../styles/mixins' as *;
 
 .resourceBar {
-  display: flex;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
   align-items: center;
   gap: $spacing-sm;
   min-width: 0;
@@ -19,12 +20,14 @@
 
 @media (max-width: 540px) {
   .resourceBar {
-    align-items: flex-start;
+    grid-template-columns: 28px minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
   }
 
   .resourceBarLabel {
-    width: auto;
-    text-align: left;
+    width: 28px;
+    text-align: right;
   }
 }
 

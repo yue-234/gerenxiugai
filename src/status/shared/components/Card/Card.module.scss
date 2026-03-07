@@ -2,27 +2,46 @@
 @use '../../styles/mixins' as *;
 
 .card {
-  background: var(--theme-card-bg);
-  border: 1px solid var(--theme-card-border);
-  border-radius: $border-radius-md;
+  background: color-mix(in srgb, var(--theme-card-bg) 92%, rgba(255, 255, 255, 0.02));
+  border: 1px solid color-mix(in srgb, var(--theme-card-border) 72%, transparent);
+  border-radius: $border-radius-sm;
   overflow: hidden;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15);
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .cardHeader {
-  padding: $spacing-sm $spacing-md;
-  background: var(--theme-tab-bar-bg);
-  border-bottom: 1px solid var(--theme-card-border);
+  padding: $spacing-md $spacing-md 10px;
+  background: transparent;
+  border-bottom: none;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--theme-text-primary);
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.2px;
   word-break: break-word;
 }
 
 .cardBody {
-  padding: $spacing-md;
+  padding: 0 $spacing-md $spacing-md;
+}
+
+.cardBodyStandalone {
+  padding-top: $spacing-md;
+}
+
+@media (max-width: 540px) {
+  .cardHeader {
+    padding: $spacing-sm $spacing-sm 8px;
+  }
+
+  .cardBody {
+    padding: 0 $spacing-sm $spacing-sm;
+  }
+
+  .cardBodyStandalone {
+    padding-top: $spacing-sm;
+  }
 }
 
 // 品质样式

@@ -1,76 +1,76 @@
 // 全局样式入口
 @use 'variables' as *;
 
-// 默认主题CSS变量（西幻羊皮纸风格）
+// 默认主题CSS变量（现代深色 RPG 面板）
 // 这些变量会在JS加载后被 themeStore.applyCssVariables() 覆盖
 :root {
   // 窗口容器
-  --theme-window-bg: #1a1410;
-  --theme-window-border: #5a3f2b;
+  --theme-window-bg: #15171c;
+  --theme-window-border: #323846;
 
   // 标题栏
-  --theme-title-bar-bg: #2b2018;
-  --theme-title-bar-text: #e7d4b5;
-  --theme-title-bar-icon: #c7a37a;
-  --theme-title-bar-btn-hover: rgba(199, 163, 122, 0.16);
+  --theme-title-bar-bg: #1a1d24;
+  --theme-title-bar-text: #f3f5f8;
+  --theme-title-bar-icon: #b9c0cc;
+  --theme-title-bar-btn-hover: rgba(255, 255, 255, 0.08);
 
   // Tab 栏
-  --theme-tab-bar-bg: #221811;
-  --theme-tab-text: #c3aa86;
-  --theme-tab-active-text: #f6e7cf;
-  --theme-tab-indicator: #b8905b;
-  --theme-tab-hover-bg: rgba(184, 144, 91, 0.14);
+  --theme-tab-bar-bg: #171a21;
+  --theme-tab-text: #a6afbd;
+  --theme-tab-active-text: #f4f7fb;
+  --theme-tab-indicator: #8f9fff;
+  --theme-tab-hover-bg: rgba(255, 255, 255, 0.06);
 
   // 内容区域
-  --theme-content-bg: #231a14;
-  --theme-card-bg: #2a2018;
-  --theme-card-border: #4d392a;
+  --theme-content-bg: #12151b;
+  --theme-card-bg: #1b1f27;
+  --theme-card-border: #2c3340;
 
   // 文本颜色
-  --theme-text-primary: #f1e1c6;
-  --theme-text-secondary: #cfb38c;
-  --theme-text-muted: #9b8366;
+  --theme-text-primary: #f3f5f8;
+  --theme-text-secondary: #c1c8d4;
+  --theme-text-muted: #8f98a8;
 
   // 资源条
-  --theme-resource-hp: #b83a2c;
-  --theme-resource-mp: #2a6bb6;
-  --theme-resource-sp: #3a8b4f;
-  --theme-resource-exp: #c08b2f;
-  --theme-resource-text: #f1e1c6;
+  --theme-resource-hp: #ff5f57;
+  --theme-resource-mp: #5b8cff;
+  --theme-resource-sp: #35c98a;
+  --theme-resource-exp: #f0b84b;
+  --theme-resource-text: #f3f5f8;
 
   // 品质颜色
-  --theme-quality-unique: #d38b3d;
-  --theme-quality-mythic: #c33d5b;
-  --theme-quality-legendary: #d7b25c;
-  --theme-quality-epic: #8e4fb3;
-  --theme-quality-rare: #3f7fc4;
-  --theme-quality-uncommon: #4d8b5a;
+  --theme-quality-unique: #f09f4d;
+  --theme-quality-mythic: #e4587d;
+  --theme-quality-legendary: #e5c166;
+  --theme-quality-epic: #9a72f8;
+  --theme-quality-rare: #5d97ff;
+  --theme-quality-uncommon: #56bf7b;
 
   // 交互状态
-  --theme-primary-bg: #8b5a2b;
-  --theme-primary-text: #f7e9d2;
-  --theme-success: #4e9a62;
-  --theme-warning: #d9a441;
-  --theme-error: #c4493d;
+  --theme-primary-bg: #8f9fff;
+  --theme-primary-text: #10131a;
+  --theme-success: #35c98a;
+  --theme-warning: #f0b84b;
+  --theme-error: #ff6d6d;
 
   // 命定系统
-  --theme-affection: #b54a5f;
-  --theme-affection-bg: rgba(181, 74, 95, 0.25);
-  --theme-affection-text: #d58d9d;
-  --theme-tag-present: rgba(76, 175, 80, 0.18);
-  --theme-tag-present-text: #7ac28c;
-  --theme-tag-contract: rgba(233, 30, 99, 0.18);
-  --theme-tag-contract-text: #e08aa6;
+  --theme-affection: #ff6f91;
+  --theme-affection-bg: rgba(255, 111, 145, 0.18);
+  --theme-affection-text: #ffb2c1;
+  --theme-tag-present: rgba(53, 201, 138, 0.16);
+  --theme-tag-present-text: #7ce3b4;
+  --theme-tag-contract: rgba(255, 111, 145, 0.16);
+  --theme-tag-contract-text: #ffb0c0;
 
   // 登神长阶
-  --theme-ascension-element: rgba(33, 150, 243, 0.12);
-  --theme-ascension-power: rgba(255, 152, 0, 0.12);
-  --theme-ascension-law: rgba(156, 39, 176, 0.12);
+  --theme-ascension-element: rgba(91, 140, 255, 0.12);
+  --theme-ascension-power: rgba(240, 184, 75, 0.12);
+  --theme-ascension-law: rgba(154, 114, 248, 0.12);
 
   // 货币
-  --theme-currency-gold: #ffd700;
-  --theme-currency-silver: #c0c0c0;
-  --theme-currency-copper: #b87333;
+  --theme-currency-gold: #f5c24f;
+  --theme-currency-silver: #d4dae4;
+  --theme-currency-copper: #d18b62;
 }
 
 * {

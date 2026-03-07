@@ -4,6 +4,7 @@ export { Card } from './Card';
 export { Collapse } from './Collapse';
 export { ConfirmModal } from './ConfirmModal';
 export { DeleteConfirmModal } from './DeleteConfirmModal';
+export { DetailSheet } from './DetailSheet';
 export { EditableField } from './EditableField';
 export { EmptyHint } from './EmptyHint';
 export { IconTitle } from './IconTitle';
@@ -21,6 +22,7 @@ export type {
   ConfirmModalRow,
 } from './ConfirmModal';
 export type { DeleteConfirmModalProps } from './DeleteConfirmModal/DeleteConfirmModal';
+export type { DetailSheetProps } from './DetailSheet/DetailSheet';
 export type { EditableFieldProps } from './EditableField';
 export type { EmptyHintProps } from './EmptyHint/EmptyHint';
 export type { IconTitleProps } from './IconTitle/IconTitle';

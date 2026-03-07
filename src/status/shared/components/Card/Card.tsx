@@ -19,7 +19,9 @@ export const Card: FC<CardProps> = ({ title, children, className = '', quality }
   return (
     <div className={`${styles.card} ${qualityClass} ${className}`}>
       {title && <div className={styles.cardHeader}>{title}</div>}
-      <div className={styles.cardBody}>{children}</div>
+      <div className={`${styles.cardBody} ${!title ? styles.cardBodyStandalone : ''}`}>
+        {children}
+      </div>
     </div>
   );
 };

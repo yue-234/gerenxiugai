@@ -641,7 +641,7 @@ export const ThemePresets: Record<ThemePresetId, Theme> = {
 };
 
 /** 默认主题 */
-export const DefaultTheme = ParchmentTheme;
+export const DefaultTheme = ObsidianTheme;
 
 /** 主题列表（用于选择器） */
 export const ThemeList: Array<{ id: ThemePresetId; name: string }> = [

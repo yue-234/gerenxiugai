@@ -3,10 +3,121 @@
 
 .statusTab {
   @include page-container;
+  gap: $spacing-sm;
 }
 
 .statusTabCard {
-  border: 1px solid var(--theme-card-border);
+  background: transparent;
+}
+
+.overviewCard {
+  padding-top: 0;
+}
+
+.overviewHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $spacing-md;
+  margin-bottom: $spacing-md;
+}
+
+.overviewHeading {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.overviewEyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--theme-text-primary);
+  line-height: 1.4;
+  letter-spacing: 0.1px;
+}
+
+.overviewTitleRow {
+  display: flex;
+  align-items: baseline;
+  gap: $spacing-sm;
+  flex-wrap: wrap;
+}
+
+.overviewLevel {
+  font-size: 22px;
+  line-height: 1.05;
+  font-weight: 700;
+  color: var(--theme-text-primary);
+}
+
+.overviewTier {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--theme-text-secondary);
+}
+
+.overviewSubtitle {
+  font-size: 12px;
+  color: var(--theme-text-muted);
+  line-height: 1.5;
+}
+
+.overviewStats {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(40px, auto));
+  gap: 10px 14px;
+  width: 100%;
+  max-width: 460px;
+  padding-top: 2px;
+  align-content: start;
+}
+
+.overviewStatItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.overviewStatItemWide {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.overviewStatLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--theme-text-primary);
+  line-height: 1.4;
+}
+
+.overviewStatValue {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--theme-text-primary);
+  line-height: 1.25;
+}
+
+.overviewStatSummary {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--theme-text-secondary);
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.primaryGrid {
+  display: block;
+}
+
+.secondaryStack {
+  @include list-container($spacing-sm);
 }
 
 .statusTabLoading,
@@ -19,6 +130,36 @@
   color: var(--theme-error);
 }
 
+@media (max-width: 680px) {
+  .overviewHeader {
+    flex-direction: column;
+  }
+
+  .overviewStats {
+    max-width: none;
+    grid-template-columns: repeat(4, minmax(40px, 1fr));
+  }
+}
+
+@media (max-width: 540px) {
+  .overviewLevel {
+    font-size: 20px;
+  }
+
+  .overviewStats {
+    grid-template-columns: repeat(3, minmax(40px, 1fr));
+    gap: 8px 10px;
+  }
+
+  .overviewStatValue {
+    font-size: 15px;
+  }
+
+  .overviewStatSummary {
+    font-size: 12px;
+  }
+}
+
 // 基础信息
 .basicInfo {
   display: grid;
@@ -28,14 +169,17 @@
 
 .basicInfoRow {
   display: grid;
-  grid-template-columns: minmax(96px, 0.33fr) minmax(0, 1fr);
+  grid-template-columns: minmax(88px, 0.3fr) minmax(0, 1fr);
   gap: $spacing-xs;
   align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .basicInfoLabel {
   font-size: 12px;
-  color: var(--theme-text-secondary);
+  font-weight: 600;
+  color: var(--theme-text-primary);
   min-width: 0;
   word-break: break-word;
 }
@@ -52,69 +196,85 @@
   .basicInfo {
     grid-template-columns: 1fr;
   }
-}
 
-// 属性
-.attributes {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: $spacing-xs;
-}
-
-.attributesEdit {
-  grid-template-columns: repeat(2, 1fr);
-}
-
-@media (max-width: 540px) {
-  .attributes {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .attributesEdit {
+  .basicInfoRow {
     grid-template-columns: 1fr;
+    gap: 4px;
+    padding: 6px 0;
   }
-}
-
-.attributesItem {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  @include item-bar;
-  border: none;
-}
-
-.attributesItemEdit {
-  flex-direction: row;
-  justify-content: space-between;
-  gap: $spacing-sm;
-}
-
-.attributesLabel {
-  font-size: 11px;
-  color: var(--theme-text-secondary);
-  margin-bottom: 2px;
-}
-
-.attributesItemEdit .attributesLabel {
-  margin-bottom: 0;
-}
-
-.attributesValue {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--theme-text-primary);
-}
-
-// 属性卡片标题编辑模式
-.attributesTitleEdit {
-  display: flex;
-  align-items: center;
-  gap: $spacing-sm;
 }
 
 // 资源条
 .resources {
   @include list-container;
+  gap: 10px;
+}
+
+.detailEntryCard {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  padding: $spacing-md;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: $border-radius-sm;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background $transition-fast,
+    border-color $transition-fast,
+    transform $transition-fast,
+    box-shadow $transition-fast;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.035);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+    transform: translateY(-1px);
+  }
+}
+
+.detailEntryHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $spacing-sm;
+}
+
+.detailEntryTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--theme-text-primary);
+  line-height: 1.4;
+}
+
+.detailEntrySummary {
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--theme-text-secondary);
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.detailEntryMeta {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  flex-shrink: 0;
+}
+
+.detailEntryCount {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--theme-text-secondary);
+  white-space: nowrap;
+}
+
+.detailEntryChevron {
+  font-size: 11px;
+  color: var(--theme-text-muted);
 }
 
 // 状态效果
@@ -127,7 +287,10 @@
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: $spacing-sm;
-  @include item-bar;
+  padding: 12px;
+  border-radius: $border-radius-sm;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.04);
   border-left: 3px solid var(--theme-success);
 }
 
@@ -155,32 +318,13 @@
   min-width: 0;
 }
 
-.collapseTitleRow {
-  display: flex;
-  align-items: center;
-  gap: $spacing-sm;
-  min-width: 0;
-}
-
-.collapseSummary {
-  font-size: 11px;
-  color: var(--theme-text-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-left: auto;
-}
-
 @media (max-width: 540px) {
-  .collapseTitleRow {
-    flex-direction: column;
+  .detailEntryHeader {
     align-items: flex-start;
-    gap: $spacing-xs;
   }
 
-  .collapseSummary {
-    margin-left: 0;
-    white-space: normal;
+  .detailEntryMeta {
+    padding-top: 2px;
   }
 }
 
