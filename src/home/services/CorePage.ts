@@ -13,6 +13,12 @@ export interface SpecialRecommendConfig {
   note: string;
 }
 
+// 特别推荐周轮换数据格式（JSON 文件顶层结构）
+export interface SpecialRecommendWeeklyData {
+  startDate: string; // 轮换起始日期，格式 "YYYY-MM-DD"
+  weeks: Record<string, Record<string, SpecialRecommendConfig>>; // week1 ~ weekN（周数由数据决定）
+}
+
 // 特别推荐最大显示数量
 export const MAX_SPECIAL_RECOMMEND_COUNT = 3;
 
@@ -31,9 +37,9 @@ export interface CoreOption {
   label: string;
   author: string; // 作者信息，从括号内提取
   enabled: boolean;
-  tabs: string[]; // 改为数组，支持一个核心属于多个分组
+  tabs: string[]; // 数组，支持一个核心属于多个分组
   note: string; // 从排行榜获取的note
-  specialNote: string; // 特别推荐的硬编码note
+  specialNote: string; // 特别推荐的note
 }
 
 // 核心条目匹配模式 - 匹配以"命定系统-"开头的条目
@@ -63,7 +69,7 @@ type CoreClassificationData = Record<string, Record<string, { note?: string }>>;
 let cachedRankings: CoreClassificationData | null = null;
 
 /**
- * 缓存的特别推荐核心数据
+ * 缓存的特别推荐核心数据（已提取为当前周的数据）
  */
 let cachedSpecialRecommendCores: Record<string, SpecialRecommendConfig> | null = null;
 
@@ -108,7 +114,40 @@ function getRankings(): CoreClassificationData | undefined {
 }
 
 /**
+ * 根据起始日期和当前时间，计算当前应显示的周 key
+ * 根据 weeks 中实际的周数进行循环轮换，若超出周数则从 week1 重新开始
+ * 若当前日期早于 startDate 则返回 "week1"
+ * @param startDate 轮换起始日期字符串，格式 "YYYY-MM-DD"
+ * @param totalWeeks weeks 中实际的周数（如 4 表示 week1~week4）
+ * @returns 当前周的 key，如 "week3"
+ */
+export function getCurrentWeekKey(startDate: string, totalWeeks: number): string {
+  // 至少1周，防止除零
+  const safeTotal = Math.max(1, totalWeeks);
+
+  const start = new Date(startDate);
+  const now = new Date();
+
+  // 清除时分秒，只按日期计算
+  start.setHours(0, 0, 0, 0);
+  now.setHours(0, 0, 0, 0);
+
+  const diffMs = now.getTime() - start.getTime();
+
+  // 如果当前日期早于起始日期，返回 week1
+  if (diffMs < 0) {
+    return 'week1';
+  }
+
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const weekIndex = Math.floor(diffDays / 7) % safeTotal;
+
+  return `week${weekIndex + 1}`;
+}
+
+/**
  * 从远程加载特别推荐核心数据
+ * 支持新的周轮换格式（含 startDate + weeks）
  * 使用 JSON5 解析，支持注释和更灵活的格式
  */
 export async function loadSpecialRecommendCores(): Promise<Record<string, SpecialRecommendConfig>> {
@@ -124,8 +163,26 @@ export async function loadSpecialRecommendCores(): Promise<Record<string, Specia
     }
 
     const text = await response.text();
-    const data = JSON5.parse(text) as Record<string, SpecialRecommendConfig>;
-    console.log('成功加载特别推荐核心数据');
+    const rawData = JSON5.parse(text);
+
+    let data: Record<string, SpecialRecommendConfig>;
+
+    // 判断是否为新的周轮换格式（含 startDate 和 weeks 字段）
+    if (rawData.startDate && rawData.weeks && typeof rawData.weeks === 'object') {
+      const weeklyData = rawData as SpecialRecommendWeeklyData;
+      // 动态计算 weeks 中实际的周数
+      const totalWeeks = Object.keys(weeklyData.weeks).length;
+      const weekKey = getCurrentWeekKey(weeklyData.startDate, totalWeeks);
+      data = weeklyData.weeks[weekKey] ?? {};
+      console.log(
+        `成功加载特别推荐核心数据（周轮换模式，共 ${totalWeeks} 周，当前: ${weekKey}，起始日期: ${weeklyData.startDate}）`,
+      );
+    } else {
+      // 兼容旧格式：直接作为扁平的核心配置
+      data = rawData as Record<string, SpecialRecommendConfig>;
+      console.log('成功加载特别推荐核心数据（旧格式）');
+    }
+
     cachedSpecialRecommendCores = data;
     return data;
   } catch (error) {
