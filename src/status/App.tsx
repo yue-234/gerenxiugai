@@ -19,7 +19,10 @@ const App: FC = () => {
 
   /** 带 badge 的 Tab 配置 */
   const tabsWithBadge = useMemo(() => {
-    const questCount = _.size(data?.任务列表);
+    const questEntries = Object.entries(data?.任务列表 ?? {});
+    const questCount = questEntries.filter(
+      ([, quest]) => (quest.状态?.trim() || '') !== '已完成',
+    ).length;
     return TabsConfig.map(tab => (tab.id === 'quests' ? { ...tab, badge: questCount } : tab));
   }, [data?.任务列表]);
 

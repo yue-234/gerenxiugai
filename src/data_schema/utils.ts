@@ -34,7 +34,10 @@ const sliceRecord = <T>(record: Record<string, T>, limit: number): Record<string
  */
 export const TaskSchema = z
   .object({
-    简介: z.string().prefault(''),
+    状态: z.string().prefault(''),
+    关注度: z.enum(['低', '中', '高']).prefault('中'),
+    进展: z.string().prefault(''),
+    详情: z.string().prefault(''),
     目标: z.string().prefault(''),
     奖励: z.string().prefault(''),
   })

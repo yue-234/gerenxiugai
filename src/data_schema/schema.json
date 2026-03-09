@@ -30,7 +30,22 @@
         "default": {},
         "type": "object",
         "properties": {
-          "简介": {
+          "状态": {
+            "type": "string"
+          },
+          "关注度": {
+            "default": "中",
+            "type": "string",
+            "enum": [
+              "低",
+              "中",
+              "高"
+            ]
+          },
+          "进展": {
+            "type": "string"
+          },
+          "详情": {
             "type": "string"
           },
           "目标": {
