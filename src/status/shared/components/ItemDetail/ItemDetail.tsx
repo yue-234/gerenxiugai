@@ -261,7 +261,7 @@ export const ItemDetail: FC<ItemDetailProps> = ({
           <div className={styles.itemEffects}>
             {editEnabled && pathPrefix ? (
               <EditableField path={`${pathPrefix}.效果`} value={data.效果 ?? {}} type="keyvalue" />
-            ) : displayMode === 'modal-detail' ? (
+            ) : displayMode === 'modal-detail' || displayMode === 'compact' ? (
               effectEntries.map(([key, value]) => (
                 <div key={key} className={styles.effectRow}>
                   <span className={styles.effectKey}>{key}</span>
