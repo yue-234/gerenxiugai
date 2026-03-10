@@ -264,7 +264,7 @@
   &:hover {
     background: color-mix(in srgb, var(--theme-card-bg) 82%, transparent);
     border-color: color-mix(in srgb, var(--theme-card-border) 88%, transparent);
-    box-shadow: 0 12px 28px color-mix(in srgb, var(--theme-window-bg) 22%, transparent);
+    box-shadow: 0 6px 16px color-mix(in srgb, var(--theme-window-border) 12%, transparent);
     transform: translateY(-1px);
   }
 }

@@ -33,6 +33,8 @@ const ParchmentTheme: Theme = {
     contentBg: '#221912',
     cardBg: '#2c2016',
     cardBorder: '#5a412a',
+    surfaceMuted: 'color-mix(in srgb, var(--theme-window-bg) 68%, var(--theme-card-bg) 32%)',
+    overlayBg: 'color-mix(in srgb, var(--theme-window-bg) 62%, transparent)',
 
     // 文本颜色
     textPrimary: '#f4e3c8',
@@ -47,6 +49,7 @@ const ParchmentTheme: Theme = {
     resourceText: '#e6d2b4',
 
     // 品质颜色
+    qualityCommon: '#e4d6bb',
     qualityUnique: '#d6a057',
     qualityMythic: '#c24b63',
     qualityLegendary: '#e1c067',
@@ -111,6 +114,8 @@ const CrimsonTheme: Theme = {
     contentBg: '#1f1114',
     cardBg: '#2a171b',
     cardBorder: '#5a2a30',
+    surfaceMuted: 'color-mix(in srgb, var(--theme-window-bg) 66%, var(--theme-card-bg) 34%)',
+    overlayBg: 'color-mix(in srgb, var(--theme-window-bg) 54%, transparent)',
 
     // 文本颜色
     textPrimary: '#f2d7d9',
@@ -125,6 +130,7 @@ const CrimsonTheme: Theme = {
     resourceText: '#e6bfc4',
 
     // 品质颜色
+    qualityCommon: '#e6c0c4',
     qualityUnique: '#d79a55',
     qualityMythic: '#b33b5d',
     qualityLegendary: '#e0b35e',
@@ -189,6 +195,8 @@ const IndigoTheme: Theme = {
     contentBg: '#121a2a',
     cardBg: '#182236',
     cardBorder: '#2c3f5e',
+    surfaceMuted: 'color-mix(in srgb, var(--theme-window-bg) 70%, var(--theme-card-bg) 30%)',
+    overlayBg: 'color-mix(in srgb, var(--theme-window-bg) 56%, transparent)',
 
     // 文本颜色
     textPrimary: '#dbe6f7',
@@ -203,6 +211,7 @@ const IndigoTheme: Theme = {
     resourceText: '#c7d4f0',
 
     // 品质颜色
+    qualityCommon: '#d5e0f2',
     qualityUnique: '#d7a35b',
     qualityMythic: '#b44874',
     qualityLegendary: '#e1c36d',
@@ -267,6 +276,8 @@ const BronzeTheme: Theme = {
     contentBg: '#171a12',
     cardBg: '#212518',
     cardBorder: '#4f4b2a',
+    surfaceMuted: 'color-mix(in srgb, var(--theme-window-bg) 69%, var(--theme-card-bg) 31%)',
+    overlayBg: 'color-mix(in srgb, var(--theme-window-bg) 55%, transparent)',
 
     // 文本颜色
     textPrimary: '#f1e4c3',
@@ -281,6 +292,7 @@ const BronzeTheme: Theme = {
     resourceText: '#e2d2a8',
 
     // 品质颜色
+    qualityCommon: '#e3d5b2',
     qualityUnique: '#d39b42',
     qualityMythic: '#b3455c',
     qualityLegendary: '#e2b858',
@@ -345,6 +357,8 @@ const SakuraTheme: Theme = {
     contentBg: '#1f141b',
     cardBg: '#2a1a23',
     cardBorder: '#563345',
+    surfaceMuted: 'color-mix(in srgb, var(--theme-window-bg) 67%, var(--theme-card-bg) 33%)',
+    overlayBg: 'color-mix(in srgb, var(--theme-window-bg) 54%, transparent)',
 
     // 文本颜色
     textPrimary: '#f2dce7',
@@ -359,6 +373,7 @@ const SakuraTheme: Theme = {
     resourceText: '#e7c6d6',
 
     // 品质颜色
+    qualityCommon: '#e6cddc',
     qualityUnique: '#d99a69',
     qualityMythic: '#c24d7b',
     qualityLegendary: '#e0b56a',
@@ -423,6 +438,8 @@ const ObsidianTheme: Theme = {
     contentBg: '#12151b',
     cardBg: '#1b1f27',
     cardBorder: '#2c3340',
+    surfaceMuted: 'color-mix(in srgb, var(--theme-window-bg) 74%, var(--theme-card-bg) 26%)',
+    overlayBg: 'color-mix(in srgb, var(--theme-window-bg) 60%, transparent)',
 
     // 文本颜色
     textPrimary: '#f3f5f8',
@@ -437,6 +454,7 @@ const ObsidianTheme: Theme = {
     resourceText: '#f3f5f8',
 
     // 品质颜色
+    qualityCommon: '#c9d2e0',
     qualityUnique: '#f09f4d',
     qualityMythic: '#e4587d',
     qualityLegendary: '#e5c166',
@@ -481,40 +499,43 @@ const IvoryTheme: Theme = {
   name: '米黄羊皮纸',
   colors: {
     // 窗口容器
-    windowBg: '#f4efe6',
-    windowBorder: '#c6ab7d',
+    windowBg: '#f1e8dc',
+    windowBorder: '#c3a97c',
 
     // 标题栏
-    titleBarBg: '#eadfce',
-    titleBarText: '#4a3520',
-    titleBarIcon: '#7a5a38',
-    titleBarBtnHover: 'rgba(122, 90, 56, 0.14)',
+    titleBarBg: '#e4d6c4',
+    titleBarText: '#443220',
+    titleBarIcon: '#745738',
+    titleBarBtnHover: 'rgba(116, 87, 56, 0.12)',
 
     // Tab 栏
-    tabBarBg: '#efe5d6',
-    tabText: '#7a6048',
-    tabActiveText: '#3b2a18',
-    tabIndicator: '#b58a4a',
-    tabHoverBg: 'rgba(181, 138, 74, 0.14)',
+    tabBarBg: '#eadfce',
+    tabText: '#725944',
+    tabActiveText: '#372615',
+    tabIndicator: '#b08343',
+    tabHoverBg: 'rgba(176, 131, 67, 0.12)',
 
     // 内容区域
-    contentBg: '#f1e8da',
-    cardBg: '#fbf6ee',
-    cardBorder: '#d4c2a4',
+    contentBg: '#ede2d2',
+    cardBg: '#f5efe4',
+    cardBorder: '#cdbb9b',
+    surfaceMuted: 'color-mix(in srgb, var(--theme-window-bg) 64%, var(--theme-card-bg) 36%)',
+    overlayBg: 'color-mix(in srgb, var(--theme-window-bg) 52%, transparent)',
 
     // 文本颜色
-    textPrimary: '#2d2214',
-    textSecondary: '#5f4d3b',
-    textMuted: '#8e7a66',
+    textPrimary: '#2b2116',
+    textSecondary: '#5a4836',
+    textMuted: '#6f5a48',
 
     // 资源条
-    resourceHp: '#b85746',
-    resourceMp: '#2f6fbe',
-    resourceSp: '#2f8458',
-    resourceExp: '#b07a2a',
-    resourceText: '#f2efe7',
+    resourceHp: '#8f2f24',
+    resourceMp: '#1f4e9a',
+    resourceSp: '#1f5e3c',
+    resourceExp: '#8a5a1f',
+    resourceText: '#f8f4ec',
 
     // 品质颜色
+    qualityCommon: '#6b6258',
     qualityUnique: '#c8872b',
     qualityMythic: '#b23d5a',
     qualityLegendary: '#c49a32',
@@ -524,19 +545,19 @@ const IvoryTheme: Theme = {
 
     // 交互状态
     primaryBg: '#b58a4a',
-    primaryText: '#ffffff',
-    success: '#2f7b52',
-    warning: '#c99633',
-    error: '#b64333',
+    primaryText: '#2b2116',
+    success: '#1f5e3c',
+    warning: '#8a6422',
+    error: '#8f2f23',
 
     // 命定系统
     affection: '#b35b6d',
     affectionBg: 'rgba(179, 91, 109, 0.18)',
-    affectionText: '#8b3d4d',
+    affectionText: '#6f2d3a',
     tagPresent: 'rgba(56, 140, 90, 0.16)',
-    tagPresentText: '#2a6a44',
+    tagPresentText: '#1f5a3a',
     tagContract: 'rgba(176, 64, 92, 0.16)',
-    tagContractText: '#9a3352',
+    tagContractText: '#7a2543',
 
     // 登神长阶
     ascensionElement: 'rgba(44, 104, 176, 0.14)',
@@ -559,40 +580,43 @@ const MistyLilacTheme: Theme = {
   name: '雾紫',
   colors: {
     // 窗口容器
-    windowBg: '#F7F5FA',
-    windowBorder: '#8C7BAB',
+    windowBg: '#F1EDF6',
+    windowBorder: '#8574A3',
 
     // 标题栏
-    titleBarBg: '#DCD4E7',
-    titleBarText: '#463B51',
-    titleBarIcon: '#696175',
-    titleBarBtnHover: 'rgba(122, 92, 179, 0.12)',
+    titleBarBg: '#D5CCE2',
+    titleBarText: '#41374C',
+    titleBarIcon: '#635C6F',
+    titleBarBtnHover: 'rgba(112, 88, 166, 0.12)',
 
     // Tab 栏
-    tabBarBg: '#F1EDF6',
-    tabText: '#696175',
-    tabActiveText: '#463B51',
-    tabIndicator: '#7A5CB3',
-    tabHoverBg: 'rgba(122, 92, 179, 0.14)',
+    tabBarBg: '#ECE6F2',
+    tabText: '#635C6F',
+    tabActiveText: '#41374C',
+    tabIndicator: '#7255A8',
+    tabHoverBg: 'rgba(114, 85, 168, 0.12)',
 
     // 内容区域
-    contentBg: '#F7F5FA',
-    cardBg: '#FCFBFE',
-    cardBorder: '#D1CBDD',
+    contentBg: '#EFEAF5',
+    cardBg: '#F6F2FA',
+    cardBorder: '#C8C1D6',
+    surfaceMuted: 'color-mix(in srgb, var(--theme-window-bg) 62%, var(--theme-card-bg) 38%)',
+    overlayBg: 'color-mix(in srgb, var(--theme-window-bg) 50%, transparent)',
 
     // 文本颜色
-    textPrimary: '#463B51',
-    textSecondary: '#696175',
-    textMuted: '#6F667A',
+    textPrimary: '#3a3145',
+    textSecondary: '#5a5368',
+    textMuted: '#544c62',
 
     // 资源条
-    resourceHp: '#D92F45',
-    resourceMp: '#3173D9',
-    resourceSp: '#2E9957',
-    resourceExp: '#D89A1E',
-    resourceText: '#f4f2f7',
+    resourceHp: '#b02337',
+    resourceMp: '#2559b8',
+    resourceSp: '#1f7a45',
+    resourceExp: '#a66f14',
+    resourceText: '#faf7ff',
 
     // 品质颜色
+    qualityCommon: '#5b5468',
     qualityUnique: '#B8873A',
     qualityMythic: '#C22B80',
     qualityLegendary: '#CFA43B',
@@ -602,19 +626,19 @@ const MistyLilacTheme: Theme = {
 
     // 交互状态
     primaryBg: '#7A5CB3',
-    primaryText: '#FFFFFF',
-    success: '#2E9957',
-    warning: '#B9892D',
-    error: '#D92F45',
+    primaryText: '#2f273a',
+    success: '#1f7a45',
+    warning: '#8f6219',
+    error: '#b02337',
 
     // 命定系统
     affection: '#F05CB2',
     affectionBg: 'rgba(240, 92, 178, 0.22)',
-    affectionText: '#5E536D',
+    affectionText: '#4a3f5c',
     tagPresent: 'rgba(46, 153, 87, 0.16)',
-    tagPresentText: '#1A6354',
+    tagPresentText: '#155243',
     tagContract: 'rgba(217, 47, 69, 0.16)',
-    tagContractText: '#C22B80',
+    tagContractText: '#8e1f5e',
 
     // 登神长阶
     ascensionElement: 'rgba(49, 115, 217, 0.14)',

@@ -40,6 +40,10 @@ export interface ThemeColors {
   cardBg: string;
   /** 卡片边框色 */
   cardBorder: string;
+  /** 柔和表面背景色 */
+  surfaceMuted: string;
+  /** 覆盖层背景色 */
+  overlayBg: string;
 
   // 文本颜色
   /** 主要文本色 */
@@ -62,6 +66,8 @@ export interface ThemeColors {
   resourceText: string;
 
   // 品质颜色
+  /** 普通品质 */
+  qualityCommon: string;
   /** 唯一品质 */
   qualityUnique: string;
   /** 神话品质 */

@@ -270,7 +270,7 @@
   &:hover {
     border-color: color-mix(in srgb, var(--theme-primary-bg) 36%, var(--theme-card-border) 64%);
     background: color-mix(in srgb, var(--theme-card-bg) 78%, var(--theme-surface-muted) 22%);
-    box-shadow: 0 12px 24px color-mix(in srgb, var(--theme-window-bg) 28%, transparent);
+    box-shadow: 0 6px 16px color-mix(in srgb, var(--theme-window-border) 12%, transparent);
     transform: translateY(-1px);
   }
 }

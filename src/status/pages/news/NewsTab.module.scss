@@ -42,7 +42,7 @@
         transparent 58%
       ),
       color-mix(in srgb, var(--theme-card-bg) 80%, var(--theme-surface-muted) 20%);
-    box-shadow: 0 12px 24px color-mix(in srgb, var(--theme-window-bg) 24%, transparent);
+    box-shadow: 0 6px 16px color-mix(in srgb, var(--theme-window-border) 12%, transparent);
     transform: translateY(-1px);
   }
 }
