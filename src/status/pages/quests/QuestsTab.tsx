@@ -3,6 +3,7 @@ import { FC, useEffect, useMemo, useState } from 'react';
 import { useDeleteConfirm } from '../../core/hooks';
 import { useEditorSettingStore } from '../../core/stores';
 import type { Task } from '../../core/types';
+import { buildSessionKey, readSessionState, writeSessionState } from '../../core/utils';
 import {
   Card,
   DeleteConfirmModal,
@@ -183,9 +184,16 @@ const QuestsTabContent: FC<WithMvuDataProps> = ({ data }) => {
   const { deleteTarget, setDeleteTarget, handleDelete, cancelDelete, isConfirmOpen } =
     useDeleteConfirm();
 
-  const [activeStatus, setActiveStatus] = useState<string>(ALL_STATUS);
+  const statusStorageKey = buildSessionKey('quests', 'active-status');
+  const focusStorageKey = buildSessionKey('quests', 'focus-quest');
+
+  const [activeStatus, setActiveStatus] = useState<string>(() =>
+    readSessionState<string>(statusStorageKey, ALL_STATUS),
+  );
   const [inspectQuest, setInspectQuest] = useState<InspectQuestState>(null);
-  const [focusQuestName, setFocusQuestName] = useState<string>('');
+  const [focusQuestName, setFocusQuestName] = useState<string>(() =>
+    readSessionState<string>(focusStorageKey, ''),
+  );
 
   const quests = data.任务列表 ?? {};
   const questEntries = useMemo(() => _.entries(quests) as [string, Task][], [quests]);
@@ -200,18 +208,27 @@ const QuestsTabContent: FC<WithMvuDataProps> = ({ data }) => {
     return [ALL_STATUS, ...dynamicStatuses];
   }, [questEntries]);
 
+  useEffect(() => {
+    if (statusOptions.length === 0) return;
+    if (!statusOptions.includes(activeStatus)) {
+      setActiveStatus(ALL_STATUS);
+    }
+  }, [activeStatus, statusOptions]);
+
+  const normalizedActiveStatus = statusOptions.includes(activeStatus) ? activeStatus : ALL_STATUS;
+
   const filteredQuestEntries = useMemo(() => {
     const entries =
-      activeStatus === ALL_STATUS
+      normalizedActiveStatus === ALL_STATUS
         ? questEntries
-        : questEntries.filter(([, quest]) => (quest.状态?.trim() || '') === activeStatus);
+        : questEntries.filter(([, quest]) => (quest.状态?.trim() || '') === normalizedActiveStatus);
 
     return _.orderBy(
       entries,
       [([, quest]) => PriorityRankMap[quest.关注度 ?? '中'] ?? 99, ([name]) => name.toLowerCase()],
       ['asc', 'asc'],
     );
-  }, [activeStatus, questEntries]);
+  }, [normalizedActiveStatus, questEntries]);
 
   const statusCountMap = useMemo(() => {
     return statusOptions.reduce<Record<string, number>>((acc, status) => {
@@ -245,14 +262,23 @@ const QuestsTabContent: FC<WithMvuDataProps> = ({ data }) => {
 
   useEffect(() => {
     if (!focusQuestName) {
+      writeSessionState(focusStorageKey, '');
       return;
     }
 
     const exists = questEntries.some(([name]) => name === focusQuestName);
     if (!exists) {
       setFocusQuestName('');
+      writeSessionState(focusStorageKey, '');
+      return;
     }
-  }, [focusQuestName, questEntries]);
+
+    writeSessionState(focusStorageKey, focusQuestName);
+  }, [focusQuestName, focusStorageKey, questEntries]);
+
+  useEffect(() => {
+    writeSessionState(statusStorageKey, activeStatus);
+  }, [activeStatus, statusStorageKey]);
 
   const handleDeleteRequest = (name: string, path: string) => {
     setDeleteTarget({ type: '任务', path, name });
@@ -357,7 +383,7 @@ const QuestsTabContent: FC<WithMvuDataProps> = ({ data }) => {
             <button
               key={status}
               type="button"
-              className={`${styles.statusFilterBtn} ${activeStatus === status ? styles.statusFilterBtnActive : ''}`}
+              className={`${styles.statusFilterBtn} ${normalizedActiveStatus === status ? styles.statusFilterBtnActive : ''}`}
               onClick={() => setActiveStatus(status)}
             >
               <span>{status}</span>
@@ -372,7 +398,11 @@ const QuestsTabContent: FC<WithMvuDataProps> = ({ data }) => {
           <EmptyHint
             className={styles.emptyHint}
             icon="fa-solid fa-scroll"
-            text={activeStatus === ALL_STATUS ? '暂无任务' : `暂无“${activeStatus}”状态的任务`}
+            text={
+              normalizedActiveStatus === ALL_STATUS
+                ? '暂无任务'
+                : `暂无“${normalizedActiveStatus}”状态的任务`
+            }
           />
         </Card>
       ) : (

@@ -1,12 +1,15 @@
 import _ from 'lodash';
-import { FC, ReactNode, useMemo, useState } from 'react';
+import { FC, ReactNode, useEffect, useMemo, useState } from 'react';
 import { useDeleteConfirm } from '../../core/hooks';
 import { useEditorSettingStore } from '../../core/stores';
 import {
+  buildSessionKey,
   formatMoney,
   getAssetCollectionSource,
   getAssetFilterOptions,
   getFilteredAssetEntries,
+  readSessionState,
+  writeSessionState,
 } from '../../core/utils';
 import type { ItemData } from '../../shared/components';
 import {
@@ -67,8 +70,15 @@ const ItemsTabContent: FC<WithMvuDataProps> = ({ data }) => {
   const { deleteTarget, setDeleteTarget, handleDelete, cancelDelete, isConfirmOpen } =
     useDeleteConfirm();
 
-  const [activeCategory, setActiveCategory] = useState<CategoryId>('inventory');
-  const [activeFilter, setActiveFilter] = useState<string>(ALL_FILTER);
+  const categoryStorageKey = buildSessionKey('items', 'active-category');
+  const filterStorageKey = buildSessionKey('items', 'active-filter');
+
+  const [activeCategory, setActiveCategory] = useState<CategoryId>(() =>
+    readSessionState<CategoryId>(categoryStorageKey, 'inventory'),
+  );
+  const [activeFilter, setActiveFilter] = useState<string>(() =>
+    readSessionState<string>(filterStorageKey, ALL_FILTER),
+  );
   const [inspectItem, setInspectItem] = useState<InspectItemState>(null);
 
   const player = data.主角;
@@ -98,19 +108,40 @@ const ItemsTabContent: FC<WithMvuDataProps> = ({ data }) => {
 
   const inspectCategoryConfig = inspectItem ? getCategoryConfig(inspectItem.categoryId) : null;
 
+  useEffect(() => {
+    if (activeCategoryConfig.id !== activeCategory) {
+      setActiveCategory(activeCategoryConfig.id);
+      return;
+    }
+    writeSessionState(categoryStorageKey, activeCategoryConfig.id);
+  }, [activeCategory, activeCategoryConfig.id, categoryStorageKey]);
+
+  useEffect(() => {
+    writeSessionState(filterStorageKey, activeFilter);
+  }, [activeFilter, filterStorageKey]);
+
   /** 计算当前类别的所有筛选选项 */
   const filterOptions = useMemo(() => {
     return getAssetFilterOptions(activeCategoryItems, getFilterKey(activeCategory), ALL_FILTER);
   }, [activeCategory, activeCategoryItems]);
 
+  useEffect(() => {
+    if (filterOptions.length === 0) return;
+    if (!filterOptions.includes(activeFilter)) {
+      setActiveFilter(ALL_FILTER);
+    }
+  }, [activeFilter, filterOptions]);
+
+  const normalizedActiveFilter = filterOptions.includes(activeFilter) ? activeFilter : ALL_FILTER;
+
   const filteredEntries = useMemo(() => {
     return getFilteredAssetEntries(
       activeCategoryItems,
       getFilterKey(activeCategory),
-      activeFilter,
+      normalizedActiveFilter,
       ALL_FILTER,
     );
-  }, [activeCategory, activeCategoryItems, activeFilter]);
+  }, [activeCategory, activeCategoryItems, normalizedActiveFilter]);
 
   const activeFilterCountMap = useMemo(() => {
     return filterOptions.reduce<Record<string, number>>((acc, option) => {
@@ -206,7 +237,9 @@ const ItemsTabContent: FC<WithMvuDataProps> = ({ data }) => {
   /** 渲染背包物品 */
   const renderInventory = () => {
     return renderItemList(
-      activeFilter === ALL_FILTER ? '背包空空如也' : `没有${activeFilter}类型的物品`,
+      normalizedActiveFilter === ALL_FILTER
+        ? '背包空空如也'
+        : `没有${normalizedActiveFilter}类型的物品`,
       item => <span className={styles.itemCount}>×{item.数量}</span>,
     );
   };
@@ -214,7 +247,9 @@ const ItemsTabContent: FC<WithMvuDataProps> = ({ data }) => {
   /** 渲染装备 */
   const renderEquipment = () => {
     return renderItemList(
-      activeFilter === ALL_FILTER ? '暂无装备' : `没有${activeFilter}位置的装备`,
+      normalizedActiveFilter === ALL_FILTER
+        ? '暂无装备'
+        : `没有${normalizedActiveFilter}位置的装备`,
       item => (item.位置 ? <span className={styles.itemSlot}>[{item.位置}]</span> : null),
     );
   };
@@ -222,7 +257,9 @@ const ItemsTabContent: FC<WithMvuDataProps> = ({ data }) => {
   /** 渲染技能 */
   const renderSkills = () => {
     return renderItemList(
-      activeFilter === ALL_FILTER ? '暂无技能' : `没有${activeFilter}类型的技能`,
+      normalizedActiveFilter === ALL_FILTER
+        ? '暂无技能'
+        : `没有${normalizedActiveFilter}类型的技能`,
       item => (item.消耗 ? <span className={styles.itemCost}>{item.消耗}</span> : null),
     );
   };

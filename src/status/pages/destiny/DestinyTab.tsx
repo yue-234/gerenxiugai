@@ -1,10 +1,13 @@
-import { FC, ReactNode, useMemo, useState } from 'react';
+import { FC, ReactNode, useEffect, useMemo, useState } from 'react';
 import { useDeleteConfirm } from '../../core/hooks';
 import { useEditorSettingStore } from '../../core/stores';
 import {
+  buildSessionKey,
   getAssetCollectionSource,
   getAssetFilterOptions,
   getFilteredAssetEntries,
+  readSessionState,
+  writeSessionState,
 } from '../../core/utils';
 import {
   Ascension,
@@ -96,13 +99,27 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
   const destinyPoints = data.命运点数;
   const partners = data.关系列表;
   const partnerEntries = useMemo(() => Object.entries(partners ?? {}), [partners]);
-  const [activePartnerListCategory, setActivePartnerListCategory] =
-    useState<PartnerListCategory>('all');
-  const [selectedPartnerName, setSelectedPartnerName] = useState<string | null>(null);
-  const [isPartnerDetailOpen, setIsPartnerDetailOpen] = useState(false);
+  const partnerCategoryStorageKey = buildSessionKey('destiny', 'partner-category');
+  const partnerNameStorageKey = buildSessionKey('destiny', 'partner-name');
+  const partnerDetailStorageKey = buildSessionKey('destiny', 'partner-detail');
+  const partnerFilterStorageKey = buildSessionKey('destiny', 'partner-filter');
+
+  const [activePartnerListCategory, setActivePartnerListCategory] = useState<PartnerListCategory>(
+    () => readSessionState<PartnerListCategory>(partnerCategoryStorageKey, 'present'),
+  );
+  const [selectedPartnerName, setSelectedPartnerName] = useState<string | null>(() =>
+    readSessionState<string | null>(partnerNameStorageKey, null),
+  );
+  const [isPartnerDetailOpen, setIsPartnerDetailOpen] = useState(() =>
+    Boolean(readSessionState<string | null>(partnerNameStorageKey, null)),
+  );
   const [activePartnerDetailSection, setActivePartnerDetailSection] =
-    useState<PartnerDetailSection>('overview');
-  const [activePartnerAssetFilter, setActivePartnerAssetFilter] = useState<string>(ALL_FILTER);
+    useState<PartnerDetailSection>(() =>
+      readSessionState<PartnerDetailSection>(partnerDetailStorageKey, 'overview'),
+    );
+  const [activePartnerAssetFilter, setActivePartnerAssetFilter] = useState<string>(() =>
+    readSessionState<string>(partnerFilterStorageKey, ALL_FILTER),
+  );
 
   const partnerCategoryEntries = useMemo(() => {
     return PartnerListCategories.map(category => {
@@ -802,6 +819,35 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
       </div>
     );
   };
+
+  useEffect(() => {
+    writeSessionState(partnerCategoryStorageKey, activePartnerListCategory);
+  }, [activePartnerListCategory, partnerCategoryStorageKey]);
+
+  useEffect(() => {
+    if (!selectedPartnerName) {
+      writeSessionState(partnerNameStorageKey, null);
+      setIsPartnerDetailOpen(false);
+      return;
+    }
+
+    writeSessionState(partnerNameStorageKey, selectedPartnerName);
+    setIsPartnerDetailOpen(true);
+  }, [partnerNameStorageKey, selectedPartnerName]);
+
+  useEffect(() => {
+    writeSessionState(partnerDetailStorageKey, activePartnerDetailSection);
+  }, [activePartnerDetailSection, partnerDetailStorageKey]);
+
+  useEffect(() => {
+    writeSessionState(partnerFilterStorageKey, activePartnerAssetFilter);
+  }, [activePartnerAssetFilter, partnerFilterStorageKey]);
+
+  useEffect(() => {
+    if (!selectedPartnerName || !activePartnerName) return;
+    if (selectedPartnerName === activePartnerName) return;
+    setSelectedPartnerName(activePartnerName);
+  }, [activePartnerName, selectedPartnerName]);
 
   return (
     <div
