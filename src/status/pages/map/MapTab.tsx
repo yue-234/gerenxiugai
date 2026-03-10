@@ -106,6 +106,8 @@ export const MapTab: FC = () => {
       setEditingDescription(activeMarker.description ?? '');
       setEditingImageUrls(activeMarker.imageUrls ?? []);
     }
+    // 切换标记时重置卡片尺寸缓存，确保 markerCardReady 重新走测量流程
+    setMarkerCardSize(null);
   }, [activeMarkerId]);
 
   const filteredMarkers = useMemo(() => {
@@ -194,7 +196,7 @@ export const MapTab: FC = () => {
       top: nextTop,
       visible: true,
     });
-  }, [activeMarker, drawMode, getViewerOverlayHost]);
+  }, [activeMarker, drawMode, getViewerOverlayHost, markerCardSize]);
 
   const mapPointFromEvent = useCallback(
     (event: React.PointerEvent<HTMLCanvasElement>, canvas: HTMLCanvasElement) => {
@@ -298,28 +300,37 @@ export const MapTab: FC = () => {
   }, [mapMarkers]);
 
   useLayoutEffect(() => {
-    const el = markerCardRef.current;
-    if (!el) return;
     if (!activeMarker || drawMode) return;
 
-    const update = () => {
+    let raf = 0;
+    let ro: ResizeObserver | null = null;
+
+    const update = (el: HTMLElement) => {
       const rect = el.getBoundingClientRect();
       if (!rect.width || !rect.height) return;
       setMarkerCardSize({ width: rect.width, height: rect.height });
     };
 
-    update();
+    const tryObserve = () => {
+      const el = markerCardRef.current;
+      if (!el) {
+        // Portal 的 ref 尚未挂载，等下一帧重试
+        raf = requestAnimationFrame(tryObserve);
+        return;
+      }
+      update(el);
+      ro = new ResizeObserver(() => {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => update(el));
+      });
+      ro.observe(el);
+    };
 
-    let raf = 0;
-    const ro = new ResizeObserver(() => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(update);
-    });
-    ro.observe(el);
+    tryObserve();
 
     return () => {
       cancelAnimationFrame(raf);
-      ro.disconnect();
+      ro?.disconnect();
     };
   }, [activeMarker?.id, drawMode]);
 
@@ -350,6 +361,13 @@ export const MapTab: FC = () => {
   useEffect(() => {
     syncActiveMarkerCardPosition();
   }, [activeMarker, drawMode, mapSourceKey, syncActiveMarkerCardPosition]);
+
+  useEffect(() => {
+    if (!markerCardSize) return;
+    requestAnimationFrame(() => {
+      syncActiveMarkerCardPosition();
+    });
+  }, [markerCardSize, syncActiveMarkerCardPosition]);
 
   useEffect(() => {
     const currentCount = mapMarkers.length;
