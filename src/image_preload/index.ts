@@ -15,7 +15,11 @@ function get_prefetches(): Prefetch[] {
   const settings = Settings.parse(getVariables(variable_option));
   insertVariables(settings, variable_option);
 
-  return _(getTavernRegexes())
+  const globalRegexes = getTavernRegexes({ type: 'global' });
+  const characterRegexes = getTavernRegexes({ type: 'character', name: 'current' });
+  const allRegexes = [...globalRegexes, ...characterRegexes];
+
+  return _(allRegexes)
     .filter(regex => regex.enabled && regex.script_name.includes('预载-'))
     .map(regex => ({
       title: regex.script_name.replace('预载-', '').replaceAll(/【.+?】/gs, ''),
