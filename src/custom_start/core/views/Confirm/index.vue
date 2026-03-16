@@ -145,7 +145,7 @@ const getStairwayView = (partner: Partner) => {
             <p><strong>年龄：</strong>{{ characterStore.character.age }} 岁</p>
             <p><strong>种族：</strong>{{ displayRace }}</p>
             <p><strong>身份：</strong>{{ displayIdentity }}</p>
-            <p><strong>出生地：</strong>{{ displayLocation }}</p>
+            <p><strong>起始地点：</strong>{{ displayLocation }}</p>
             <p><strong>等级：</strong>Lv.{{ characterStore.character.level }}</p>
             <p><strong>金钱：</strong>{{ characterStore.character.money }} G</p>
           </div>

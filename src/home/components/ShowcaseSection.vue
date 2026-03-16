@@ -1,9 +1,5 @@
 <template>
   <div class="showcase-section">
-    <!-- 主标题 -->
-    <h1 class="page-super-title">命定之诗与黄昏之歌</h1>
-    <p class="page-subtitle-english">Destined Poetry & Twilight Song</p>
-    <hr class="ornamental-divider" />
 
     <!-- 制作人员展示区 -->
     <div class="credits-container">
@@ -51,7 +47,7 @@
           <ul>
             <li>
               <a
-                href="https://discord.com/channels/1134557553011998840/1422790367631380490"
+                href="https://discord.com/channels/1134557553011998840/1448526819824504882"
                 target="_blank"
                 rel="noopener noreferrer"
                 >更新频道 *脑</a
@@ -59,7 +55,7 @@
             </li>
             <li>
               <a
-                href="https://discord.com/channels/1291925535324110879/1422794259056033832"
+                href="https://discord.com/channels/1291925535324110879/1448533751540879452"
                 target="_blank"
                 rel="noopener noreferrer"
                 >更新频道 *程</a
@@ -94,55 +90,12 @@ const teamMembers = [
 
 const hallOfFame = ['@Kitaikuyo', '@秋天的咸鱼'];
 
-const specialThanks = ['@FL已放弃治疗', '@tongtny123', '@willing', '@肆祀一一', '@大乐'];
+const specialThanks = ['@FL已放弃治疗', '@tongtny123', '@肆祀一一', '@大乐'];
 </script>
 
 <style scoped>
-/* --- New Main Page Title --- */
-.page-super-title {
-  font-family: var(--title-font);
-  font-weight: 700;
-  text-align: center;
-  font-size: 2.8em;
-  color: var(--title-color);
-  margin: 10px 0 0 0;
-  letter-spacing: 2px;
-}
-
-.page-subtitle-english {
-  font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, 'Times New Roman', serif;
-  font-style: italic;
-  text-align: center;
-  font-size: 1.3em;
-  color: #8b7355;
-  margin: 8px 0 0 0;
-  letter-spacing: 3px;
-  font-weight: 400;
-}
-
-.ornamental-divider {
-  border: 0;
-  height: 1px;
-  background-color: var(--border-color);
-  position: relative;
-  margin: 25px auto 30px auto;
-  width: 85%;
-}
-
-.ornamental-divider::after {
-  content: '❖';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: var(--container-bg-color);
-  padding: 0 15px;
-  color: var(--title-color);
-  font-size: 1.6em;
-  line-height: 1;
-}
-
 /* --- Credits & Info Styles --- */
+
 .credits-container {
   text-align: center;
   margin-bottom: 25px;
@@ -313,9 +266,6 @@ const specialThanks = ['@FL已放弃治疗', '@tongtny123', '@willing', '@肆祀
 
 /* Responsive */
 @media screen and (max-width: 600px) {
-  .page-super-title {
-    font-size: 2em;
-  }
 
   .info-panel > summary {
     padding: 10px 15px;

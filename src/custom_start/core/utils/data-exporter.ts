@@ -179,7 +179,7 @@ export function generateAIPrompt(
   lines.push(`年龄: ${character.age}岁`);
   lines.push(`种族: ${displayRace}`);
   lines.push(`身份: ${displayIdentity}`);
-  lines.push(`出生地: ${displayLocation}`);
+  lines.push(`起始地点: ${displayLocation}`);
   lines.push(`生命层级: ${getLevelTierName(character.level)}`);
   lines.push(`等级: Lv.${character.level}`);
   lines.push('');
