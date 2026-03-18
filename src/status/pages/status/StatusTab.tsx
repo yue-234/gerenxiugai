@@ -31,9 +31,6 @@ const BasicInfoFields: BasicInfoFieldConfig[] = [
   { key: '种族', label: '种族', type: 'text', editable: true, defaultValue: '未知' },
   { key: '职业', label: '职业', type: 'tags', editable: true, defaultValue: [] },
   { key: '身份', label: '身份', type: 'tags', editable: true, defaultValue: [] },
-  { key: '生命层级', label: '生命层级', type: 'text', editable: false, defaultValue: '第一层级' },
-  { key: '等级', label: '等级', type: 'number', editable: false, defaultValue: 1, prefix: 'Lv.' },
-  { key: '冒险者等级', label: '冒险者等级', type: 'text', editable: true, defaultValue: '未评级' },
 ];
 
 // 资源条配置
@@ -207,22 +204,6 @@ const StatusTabContent: FC<WithMvuDataProps> = ({ data }) => {
               ) : (
                 <span className={styles.overviewStatValue}>{player.属性点 ?? 0}</span>
               )}
-            </div>
-          </div>
-          <div className={styles.overviewSummaryGrid}>
-            <div className={styles.overviewSummaryItem}>
-              <span className={styles.overviewStatLabel}>状态效果</span>
-              <StatusEffectDisplay
-                effects={statusEffects}
-                mode="chips"
-                maxVisible={4}
-                showRemainingCount
-                emptyText="无效果"
-              />
-            </div>
-            <div className={styles.overviewSummaryItem}>
-              <span className={styles.overviewStatLabel}>登神长阶</span>
-              <span className={styles.overviewStatSummary}>{ascensionSummary}</span>
             </div>
           </div>
         </div>
