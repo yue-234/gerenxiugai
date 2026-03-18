@@ -122,7 +122,11 @@ const ItemsTabContent: FC<WithMvuDataProps> = ({ data }) => {
 
   /** 计算当前类别的所有筛选选项 */
   const filterOptions = useMemo(() => {
-    const options = getAssetFilterOptions(activeCategoryItems, getFilterKey(activeCategory), ALL_FILTER);
+    const options = getAssetFilterOptions(
+      activeCategoryItems,
+      getFilterKey(activeCategory),
+      ALL_FILTER,
+    );
     if (activeCategory === 'skills') {
       return options.filter(opt => opt !== ALL_FILTER);
     }
@@ -138,7 +142,9 @@ const ItemsTabContent: FC<WithMvuDataProps> = ({ data }) => {
 
   const normalizedActiveFilter = filterOptions.includes(activeFilter)
     ? activeFilter
-    : (filterOptions.length > 0 ? filterOptions[0] : ALL_FILTER);
+    : filterOptions.length > 0
+      ? filterOptions[0]
+      : ALL_FILTER;
 
   const filteredEntries = useMemo(() => {
     return getFilteredAssetEntries(
@@ -167,7 +173,11 @@ const ItemsTabContent: FC<WithMvuDataProps> = ({ data }) => {
   const handleCategoryChange = (category: CategoryId) => {
     setActiveCategory(category);
     if (category === 'skills') {
-      const options = getAssetFilterOptions(getCategoryData(category), getFilterKey(category), ALL_FILTER);
+      const options = getAssetFilterOptions(
+        getCategoryData(category),
+        getFilterKey(category),
+        ALL_FILTER,
+      );
       const skillOptions = options.filter(opt => opt !== ALL_FILTER);
       setActiveFilter(skillOptions.length > 0 ? skillOptions[0] : ALL_FILTER);
     } else {
