@@ -15,9 +15,12 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-sm;
+  max-height: 650px;
+  overflow-y: auto;
 }
 
 .newsFeedCard {
+  flex-shrink: 0;
   border: 1px solid color-mix(in srgb, var(--theme-card-border) 78%, transparent);
   border-radius: $border-radius-md;
   background:

@@ -122,7 +122,11 @@ const ItemsTabContent: FC<WithMvuDataProps> = ({ data }) => {
 
   /** 计算当前类别的所有筛选选项 */
   const filterOptions = useMemo(() => {
-    return getAssetFilterOptions(activeCategoryItems, getFilterKey(activeCategory), ALL_FILTER);
+    const options = getAssetFilterOptions(activeCategoryItems, getFilterKey(activeCategory), ALL_FILTER);
+    if (activeCategory === 'skills') {
+      return options.filter(opt => opt !== ALL_FILTER);
+    }
+    return options;
   }, [activeCategory, activeCategoryItems]);
 
   useEffect(() => {
@@ -132,7 +136,9 @@ const ItemsTabContent: FC<WithMvuDataProps> = ({ data }) => {
     }
   }, [activeFilter, filterOptions]);
 
-  const normalizedActiveFilter = filterOptions.includes(activeFilter) ? activeFilter : ALL_FILTER;
+  const normalizedActiveFilter = filterOptions.includes(activeFilter)
+    ? activeFilter
+    : (filterOptions.length > 0 ? filterOptions[0] : ALL_FILTER);
 
   const filteredEntries = useMemo(() => {
     return getFilteredAssetEntries(
@@ -160,7 +166,13 @@ const ItemsTabContent: FC<WithMvuDataProps> = ({ data }) => {
   /** 切换类别时重置筛选器 */
   const handleCategoryChange = (category: CategoryId) => {
     setActiveCategory(category);
-    setActiveFilter(ALL_FILTER);
+    if (category === 'skills') {
+      const options = getAssetFilterOptions(getCategoryData(category), getFilterKey(category), ALL_FILTER);
+      const skillOptions = options.filter(opt => opt !== ALL_FILTER);
+      setActiveFilter(skillOptions.length > 0 ? skillOptions[0] : ALL_FILTER);
+    } else {
+      setActiveFilter(ALL_FILTER);
+    }
     setInspectItem(null);
   };
 

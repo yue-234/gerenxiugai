@@ -220,8 +220,8 @@ export const ItemDetail: FC<ItemDetailProps> = ({
       )}
 
       {(displayMode === 'modal-detail' || editEnabled) &&
-      (itemCategory === 'equipment' || itemCategory === 'item') &&
-      (data.位置 || itemCategory === 'equipment') ? (
+        (itemCategory === 'equipment' || itemCategory === 'item') &&
+        (data.位置 || itemCategory === 'equipment') ? (
         <div className={styles.itemFieldRow}>
           <span className={styles.fieldLabel}>位置</span>
           {renderEditableOrText('位置', data.位置 ?? '', 'text')}
@@ -229,8 +229,8 @@ export const ItemDetail: FC<ItemDetailProps> = ({
       ) : null}
 
       {(displayMode === 'modal-detail' || editEnabled) &&
-      (itemCategory === 'skill' || itemCategory === 'item') &&
-      (data.消耗 || itemCategory === 'skill') ? (
+        (itemCategory === 'skill' || itemCategory === 'item') &&
+        (data.消耗 || itemCategory === 'skill') ? (
         <div className={styles.itemFieldRow}>
           <span className={styles.fieldLabel}>消耗</span>
           {renderEditableOrText('消耗', data.消耗 ?? '', 'text')}
@@ -305,7 +305,6 @@ export const ItemDetail: FC<ItemDetailProps> = ({
       onClick={onInspect}
     >
       {renderTitle()}
-      <div className={styles.itemPanelBody}>{renderSummary()}</div>
     </button>
   );
 };
