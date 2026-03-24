@@ -14,6 +14,15 @@ export const getAssetCollectionSource = (
   return (owner[data_key] ?? {}) as AssetCollectionSource;
 };
 
+/** 提取筛选字段主分类：仅保留斜杠前第一段 */
+const normalizeAssetFilterValue = (value: unknown): string => {
+  if (typeof value !== 'string') {
+    return '';
+  }
+
+  return _.trim(String(value).split('/')[0] ?? '');
+};
+
 /** 获取资产筛选项，默认包含“全部” */
 export const getAssetFilterOptions = (
   source: AssetCollectionSource,
@@ -23,8 +32,8 @@ export const getAssetFilterOptions = (
   const values = new Set<string>();
 
   _.forEach(source, item => {
-    const value = _.get(item, filter_key);
-    if (typeof value === 'string' && value) {
+    const value = normalizeAssetFilterValue(_.get(item, filter_key));
+    if (value) {
       values.add(value);
     }
   });
@@ -48,5 +57,7 @@ export const getFilteredAssetEntries = (
     return allEntries;
   }
 
-  return allEntries.filter(([, item]) => _.get(item, filter_key) === active_filter);
+  return allEntries.filter(
+    ([, item]) => normalizeAssetFilterValue(_.get(item, filter_key)) === active_filter,
+  );
 };
