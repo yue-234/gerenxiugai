@@ -172,7 +172,9 @@ const ItemsTabContent: FC<WithMvuDataProps> = ({ data }) => {
           const rawValue = _.get(item, getFilterKey(activeCategory));
           const normalizedValue = shouldNormalizeFilterByPrefix(activeCategory)
             ? _.trim(String(rawValue ?? '').split('/')[0] ?? '')
-            : (typeof rawValue === 'string' ? _.trim(rawValue) : '');
+            : typeof rawValue === 'string'
+              ? _.trim(rawValue)
+              : '';
           return normalizedValue === option;
         }),
       );

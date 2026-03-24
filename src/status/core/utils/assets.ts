@@ -68,6 +68,7 @@ export const getFilteredAssetEntries = (
   }
 
   return allEntries.filter(
-    ([, item]) => resolveAssetFilterValue(_.get(item, filter_key), normalize_by_prefix) === active_filter,
+    ([, item]) =>
+      resolveAssetFilterValue(_.get(item, filter_key), normalize_by_prefix) === active_filter,
   );
 };
