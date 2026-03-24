@@ -100,6 +100,9 @@ const ItemsTabContent: FC<WithMvuDataProps> = ({ data }) => {
     return cat?.filterKey ?? '类型';
   };
 
+  /** 仅背包物品按斜杠前主类型归并筛选 */
+  const shouldNormalizeFilterByPrefix = (category: CategoryId) => category === 'inventory';
+
   const activeCategoryConfig = getCategoryConfig(activeCategory);
   const activeCategoryItems = useMemo(
     () => getCategoryData(activeCategory),
@@ -126,6 +129,7 @@ const ItemsTabContent: FC<WithMvuDataProps> = ({ data }) => {
       activeCategoryItems,
       getFilterKey(activeCategory),
       ALL_FILTER,
+      shouldNormalizeFilterByPrefix(activeCategory),
     );
     if (activeCategory === 'skills') {
       return options.filter(opt => opt !== ALL_FILTER);
@@ -152,6 +156,7 @@ const ItemsTabContent: FC<WithMvuDataProps> = ({ data }) => {
       getFilterKey(activeCategory),
       normalizedActiveFilter,
       ALL_FILTER,
+      shouldNormalizeFilterByPrefix(activeCategory),
     );
   }, [activeCategory, activeCategoryItems, normalizedActiveFilter]);
 
@@ -163,7 +168,13 @@ const ItemsTabContent: FC<WithMvuDataProps> = ({ data }) => {
       }
 
       acc[option] = _.size(
-        _.pickBy(activeCategoryItems, item => _.get(item, getFilterKey(activeCategory)) === option),
+        _.pickBy(activeCategoryItems, item => {
+          const rawValue = _.get(item, getFilterKey(activeCategory));
+          const normalizedValue = shouldNormalizeFilterByPrefix(activeCategory)
+            ? _.trim(String(rawValue ?? '').split('/')[0] ?? '')
+            : (typeof rawValue === 'string' ? _.trim(rawValue) : '');
+          return normalizedValue === option;
+        }),
       );
       return acc;
     }, {});
@@ -177,6 +188,7 @@ const ItemsTabContent: FC<WithMvuDataProps> = ({ data }) => {
         getCategoryData(category),
         getFilterKey(category),
         ALL_FILTER,
+        shouldNormalizeFilterByPrefix(category),
       );
       const skillOptions = options.filter(opt => opt !== ALL_FILTER);
       setActiveFilter(skillOptions.length > 0 ? skillOptions[0] : ALL_FILTER);

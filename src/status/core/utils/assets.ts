@@ -23,16 +23,25 @@ const normalizeAssetFilterValue = (value: unknown): string => {
   return _.trim(String(value).split('/')[0] ?? '');
 };
 
+const resolveAssetFilterValue = (value: unknown, normalize_by_prefix = false): string => {
+  if (normalize_by_prefix) {
+    return normalizeAssetFilterValue(value);
+  }
+
+  return typeof value === 'string' ? _.trim(value) : '';
+};
+
 /** 获取资产筛选项，默认包含“全部” */
 export const getAssetFilterOptions = (
   source: AssetCollectionSource,
   filter_key: AssetCollectionFilterKey,
   all_filter_label: string,
+  normalize_by_prefix = false,
 ): string[] => {
   const values = new Set<string>();
 
   _.forEach(source, item => {
-    const value = normalizeAssetFilterValue(_.get(item, filter_key));
+    const value = resolveAssetFilterValue(_.get(item, filter_key), normalize_by_prefix);
     if (value) {
       values.add(value);
     }
@@ -50,6 +59,7 @@ export const getFilteredAssetEntries = (
   filter_key: AssetCollectionFilterKey,
   active_filter: string,
   all_filter_label: string,
+  normalize_by_prefix = false,
 ): [string, AssetCollectionItem][] => {
   const allEntries = sortEntriesByQuality(source);
 
@@ -58,6 +68,6 @@ export const getFilteredAssetEntries = (
   }
 
   return allEntries.filter(
-    ([, item]) => normalizeAssetFilterValue(_.get(item, filter_key)) === active_filter,
+    ([, item]) => resolveAssetFilterValue(_.get(item, filter_key), normalize_by_prefix) === active_filter,
   );
 };
