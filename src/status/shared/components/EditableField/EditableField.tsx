@@ -35,6 +35,7 @@ export interface EditableFieldProps {
     max?: number;
     step?: number;
     suffix?: string;
+    showButtons?: boolean;
   };
   /** 键值对编辑器配置 */
   keyValueConfig?: {

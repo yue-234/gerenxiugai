@@ -6,12 +6,14 @@ import {
   getAssetCollectionSource,
   getAssetFilterOptions,
   getFilteredAssetEntries,
+  getQualityClass,
   readSessionState,
   writeSessionState,
 } from '../../core/utils';
 import {
   Ascension,
   Card,
+  Collapse,
   DeleteConfirmModal,
   EditableField,
   EmptyHint,
@@ -50,11 +52,11 @@ const PartnerListCategories: Array<{
   label: string;
   matches: (partner: Record<string, any>) => boolean;
 }> = [
-  { key: 'all', label: '全部', matches: () => true },
-  { key: 'present', label: '在场', matches: partner => Boolean(partner.在场) },
-  { key: 'away', label: '不在场', matches: partner => !partner.在场 },
-  { key: 'contracted', label: '已缔约', matches: partner => Boolean(partner.命定契约) },
-];
+    { key: 'all', label: '全部', matches: () => true },
+    { key: 'present', label: '在场', matches: partner => Boolean(partner.在场) },
+    { key: 'away', label: '不在场', matches: partner => !partner.在场 },
+    { key: 'contracted', label: '已缔约', matches: partner => Boolean(partner.命定契约) },
+  ];
 
 const PartnerAssetSections: PartnerAssetSectionConfig[] = [
   {
@@ -304,6 +306,22 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
       return <EmptyHint className={styles.emptyHint} text={sectionConfig.emptyText} />;
     }
 
+    const renderAssetCollapseTitle = (name: string, item: Record<string, any>) => {
+      const slot = sectionConfig.key === 'equipment' ? item.位置 : null;
+      const count = sectionConfig.key === 'inventory' ? item.数量 ?? 1 : null;
+      const skillType = sectionConfig.key === 'skills' ? item.类型 : null;
+      const qualityClass = getQualityClass(item.品质, styles);
+
+      return (
+        <div className={styles.assetCollapseTitle}>
+          <span className={`${styles.assetCollapseName} ${qualityClass}`.trim()}>{name}</span>
+          {slot ? <span className={styles.assetCollapseMeta}>{slot}</span> : null}
+          {skillType ? <span className={styles.assetCollapseMeta}>{skillType}</span> : null}
+          {count !== null ? <span className={styles.assetCollapseMeta}>x{count}</span> : null}
+        </div>
+      );
+    };
+
     return (
       <div className={sectionClassName}>
         <div className={styles.partnerAssetHeader}>
@@ -322,8 +340,8 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
                 option === ALL_FILTER
                   ? totalCount
                   : _.size(
-                      _.pickBy(source, item => _.get(item, sectionConfig.filterKey) === option),
-                    );
+                    _.pickBy(source, item => _.get(item, sectionConfig.filterKey) === option),
+                  );
 
               return (
                 <button
@@ -343,23 +361,28 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
         {activePartnerAssetEntries.length > 0 ? (
           <div className={listClassName}>
             {activePartnerAssetEntries.map(([name, item]) => (
-              <ItemDetail
+              <Collapse
                 key={name}
-                name={name}
-                data={item}
-                titleSuffix={sectionConfig.getTitleSuffix(item)}
-                editEnabled={editEnabled}
-                pathPrefix={`关系列表.${partnerName}.${sectionConfig.dataKey}.${name}`}
-                onDelete={() =>
-                  setDeleteTarget({
-                    type: sectionConfig.label,
-                    path: `关系列表.${partnerName}.${sectionConfig.dataKey}.${name}`,
-                    name,
-                  })
-                }
-                itemCategory={sectionConfig.itemCategory}
-                displayMode="compact"
-              />
+                title={renderAssetCollapseTitle(name, item)}
+                className={styles.assetCollapse}
+              >
+                <ItemDetail
+                  name={name}
+                  data={item}
+                  titleSuffix={sectionConfig.getTitleSuffix(item)}
+                  editEnabled={editEnabled}
+                  pathPrefix={`关系列表.${partnerName}.${sectionConfig.dataKey}.${name}`}
+                  onDelete={() =>
+                    setDeleteTarget({
+                      type: sectionConfig.label,
+                      path: `关系列表.${partnerName}.${sectionConfig.dataKey}.${name}`,
+                      name,
+                    })
+                  }
+                  itemCategory={sectionConfig.itemCategory}
+                  displayMode="modal-detail"
+                />
+              </Collapse>
             ))}
           </div>
         ) : (
@@ -405,10 +428,14 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
     );
   };
 
-  const renderPartnerSummary = (partnerName: string, partner: Record<string, any>) => (
+  const renderPartnerSummary = (
+    partnerName: string,
+    partner: Record<string, any>,
+    nameClassName = styles.partnerHeaderName,
+  ) => (
     <div className={styles.partnerTitle}>
       <div className={styles.partnerTitleMain}>
-        <IconTitle text={partnerName} className={styles.partnerName} />
+        <IconTitle text={partnerName} className={nameClassName} />
         <div className={styles.partnerMeta}>
           <span className={styles.affectionBadge}>好感度 {partner.好感度 ?? 0}</span>
           <div className={styles.partnerTags}>
@@ -508,9 +535,17 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
           handlePartnerSelect(partnerName);
         }
       }}
+      title={partnerName}
     >
+      <div className={styles.partnerSummaryCompact}>
+        <div className={styles.partnerSummaryRow}>
+          <div className={styles.partnerName}>{partnerName}</div>
+          <span className={styles.partnerSummaryAffection}>好感度 {partner.好感度 ?? 0}</span>
+        </div>
+      </div>
+
       <div className={styles.partnerSummaryMain}>
-        {renderPartnerSummary(partnerName, partner)}
+        {renderPartnerSummary(partnerName, partner, styles.partnerName)}
         <div className={styles.partnerSummaryText}>{getPartnerSummaryText(partner)}</div>
         <div className={styles.partnerSummaryStatus}>{getPartnerStatusSummary(partner)}</div>
       </div>

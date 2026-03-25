@@ -205,9 +205,7 @@ export const StatusEffectDisplay: FC<StatusEffectDisplayProps> = ({
                 </div>
 
                 {effect.效果 ? <div className={styles.effectDesc}>{effect.效果}</div> : null}
-                {effect.来源 ? (
-                  <div className={styles.effectSource}>来源：{effect.来源}</div>
-                ) : null}
+                {effect.来源 ? <div className={styles.effectSource}>来源：{effect.来源}</div> : null}
               </>
             )}
           </div>
