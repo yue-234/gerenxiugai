@@ -52,11 +52,11 @@ const PartnerListCategories: Array<{
   label: string;
   matches: (partner: Record<string, any>) => boolean;
 }> = [
-    { key: 'all', label: '全部', matches: () => true },
-    { key: 'present', label: '在场', matches: partner => Boolean(partner.在场) },
-    { key: 'away', label: '不在场', matches: partner => !partner.在场 },
-    { key: 'contracted', label: '已缔约', matches: partner => Boolean(partner.命定契约) },
-  ];
+  { key: 'all', label: '全部', matches: () => true },
+  { key: 'present', label: '在场', matches: partner => Boolean(partner.在场) },
+  { key: 'away', label: '不在场', matches: partner => !partner.在场 },
+  { key: 'contracted', label: '已缔约', matches: partner => Boolean(partner.命定契约) },
+];
 
 const PartnerAssetSections: PartnerAssetSectionConfig[] = [
   {
@@ -308,7 +308,7 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
 
     const renderAssetCollapseTitle = (name: string, item: Record<string, any>) => {
       const slot = sectionConfig.key === 'equipment' ? item.位置 : null;
-      const count = sectionConfig.key === 'inventory' ? item.数量 ?? 1 : null;
+      const count = sectionConfig.key === 'inventory' ? (item.数量 ?? 1) : null;
       const skillType = sectionConfig.key === 'skills' ? item.类型 : null;
       const qualityClass = getQualityClass(item.品质, styles);
 
@@ -340,8 +340,8 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
                 option === ALL_FILTER
                   ? totalCount
                   : _.size(
-                    _.pickBy(source, item => _.get(item, sectionConfig.filterKey) === option),
-                  );
+                      _.pickBy(source, item => _.get(item, sectionConfig.filterKey) === option),
+                    );
 
               return (
                 <button
