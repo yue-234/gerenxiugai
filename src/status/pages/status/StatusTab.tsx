@@ -1,9 +1,11 @@
 import { FC, useState } from 'react';
 import { useDeleteConfirm } from '../../core/hooks';
-import { useEditorSettingStore } from '../../core/stores';
+import { useEditorSettingStore, useMvuDataStore } from '../../core/stores';
+import { buildSessionKey } from '../../core/utils';
 import {
   Ascension,
   Card,
+  Collapse,
   DeleteConfirmModal,
   DetailSheet,
   EditableField,
@@ -31,6 +33,9 @@ const BasicInfoFields: BasicInfoFieldConfig[] = [
   { key: '种族', label: '种族', type: 'text', editable: true, defaultValue: '未知' },
   { key: '职业', label: '职业', type: 'tags', editable: true, defaultValue: [] },
   { key: '身份', label: '身份', type: 'tags', editable: true, defaultValue: [] },
+  { key: '生命层级', label: '生命层级', type: 'text', editable: false, defaultValue: '第一层级' },
+  { key: '等级', label: '等级', type: 'number', editable: false, defaultValue: 1, prefix: 'Lv.' },
+  { key: '冒险者等级', label: '冒险者等级', type: 'text', editable: true, defaultValue: '未评级' },
 ];
 
 // 资源条配置
@@ -45,6 +50,7 @@ const ResourceFields = [
  */
 const StatusTabContent: FC<WithMvuDataProps> = ({ data }) => {
   const editEnabled = useEditorSettingStore(state => state.editEnabled);
+  const updateField = useMvuDataStore(state => state.updateField);
   const { deleteTarget, setDeleteTarget, handleDelete, cancelDelete, isConfirmOpen } =
     useDeleteConfirm();
   const [activeDetail, setActiveDetail] = useState<'status-effects' | 'ascension' | null>(null);
@@ -139,6 +145,22 @@ const StatusTabContent: FC<WithMvuDataProps> = ({ data }) => {
     );
   };
 
+  const handleAllocateAttributePoint = async (attributeKey: string, currentValue: number) => {
+    const remainingPoints = Number(player.属性点 ?? 0);
+    if (remainingPoints <= 0) return;
+
+    const nextAttributeValue = Number(currentValue ?? 0) + 1;
+    const nextRemainingPoints = remainingPoints - 1;
+
+    const attributeUpdated = await updateField(`主角.属性.${attributeKey}`, nextAttributeValue);
+    if (!attributeUpdated) return;
+
+    const pointsUpdated = await updateField('主角.属性点', nextRemainingPoints);
+    if (!pointsUpdated) {
+      await updateField(`主角.属性.${attributeKey}`, currentValue ?? 0);
+    }
+  };
+
   const statusEffects = player.状态效果 ?? {};
   const effectEntries = Object.entries(statusEffects);
   const effectStats = {
@@ -164,50 +186,32 @@ const StatusTabContent: FC<WithMvuDataProps> = ({ data }) => {
     ? _.compact(ascensionParts).join(' · ') || '已开启'
     : '未开启';
 
+  const overviewPrimarySummary = [
+    `Lv.${player.等级 ?? 1}`,
+    player.生命层级 || '未记录生命层级',
+  ].join(' · ');
+
+  const overviewSecondarySummary = [
+    `HP ${player.生命值 ?? 0}/${player.生命值上限 ?? 0}`,
+    `MP ${player.法力值 ?? 0}/${player.法力值上限 ?? 0}`,
+    `SP ${player.体力值 ?? 0}/${player.体力值上限 ?? 0}`,
+  ].join(' · ');
+
+  const overviewCollapseStorageKey = buildSessionKey('status', 'overview-collapse');
+  const basicInfoCollapseStorageKey = buildSessionKey('status', 'basic-info-collapse');
+
   return (
     <div className={styles.statusTab}>
-      <Card className={`${styles.statusTabCard} ${styles.overviewCard}`}>
-        <div className={styles.overviewHeader}>
-          <div className={styles.overviewHeading}>
-            <span className={styles.overviewEyebrow}>角色总览</span>
-            <div className={styles.overviewTitleRow}>
-              <span className={styles.overviewLevel}>Lv.{player.等级 ?? 1}</span>
-              <span className={styles.overviewTier}>{player.生命层级 || '未记录生命层级'}</span>
-            </div>
-            <span className={styles.overviewSubtitle}>{player.冒险者等级 || '未评级冒险者'}</span>
-          </div>
-          <div className={styles.overviewStats}>
-            {_.map(player.属性, (value, key) => (
-              <div key={key} className={styles.overviewStatItem}>
-                <span className={styles.overviewStatLabel}>{key}</span>
-                {editEnabled ? (
-                  <EditableField
-                    path={`主角.属性.${key}`}
-                    value={value ?? 0}
-                    type="number"
-                    numberConfig={{ min: 0, max: 20, step: 1 }}
-                  />
-                ) : (
-                  <span className={styles.overviewStatValue}>{value ?? 0}</span>
-                )}
-              </div>
-            ))}
-            <div className={styles.overviewStatItem}>
-              <span className={styles.overviewStatLabel}>属性点</span>
-              {editEnabled ? (
-                <EditableField
-                  path="主角.属性点"
-                  value={player.属性点 ?? 0}
-                  type="number"
-                  numberConfig={{ min: 0, step: 1 }}
-                />
-              ) : (
-                <span className={styles.overviewStatValue}>{player.属性点 ?? 0}</span>
-              )}
-            </div>
-          </div>
-        </div>
-
+      <Collapse
+        title={
+          <span className={styles.overviewCollapseTitle}>
+            <span className={styles.overviewCollapsePrimary}>{overviewPrimarySummary}</span>
+            <span className={styles.overviewCollapseSecondary}>{overviewSecondarySummary}</span>
+          </span>
+        }
+        className={styles.overviewCollapse}
+        storageKey={overviewCollapseStorageKey}
+      >
         <div className={styles.resources}>
           {editEnabled ? (
             <>
@@ -252,12 +256,68 @@ const StatusTabContent: FC<WithMvuDataProps> = ({ data }) => {
             </>
           )}
         </div>
-      </Card>
+      </Collapse>
 
       <div className={styles.primaryGrid}>
-        <Card title="角色档案" className={styles.statusTabCard}>
+        <Collapse
+          title="角色档案"
+          className={styles.overviewCollapse}
+          storageKey={basicInfoCollapseStorageKey}
+        >
           <div className={styles.basicInfo}>
             {BasicInfoFields.map(field => renderBasicInfoField(field))}
+          </div>
+        </Collapse>
+
+        <Card
+          title={
+            editEnabled ? (
+              <div className={styles.attributesTitleEdit}>
+                <span>可分配属性点:</span>
+                <EditableField
+                  path="主角.属性点"
+                  value={player.属性点 ?? 0}
+                  type="number"
+                  numberConfig={{ min: 0, step: 1 }}
+                />
+              </div>
+            ) : (
+              `可分配属性点: ${player.属性点 ?? 0}`
+            )
+          }
+          className={styles.statusTabCard}
+        >
+          <div className={`${styles.attributes} ${editEnabled ? styles.attributesEdit : ''}`}>
+            {_.map(player.属性, (value, key) => (
+              <div
+                key={key}
+                className={`${styles.attributesItem} ${editEnabled ? styles.attributesItemEdit : ''}`}
+              >
+                <span className={styles.attributesLabel}>{key}</span>
+                {editEnabled ? (
+                  <EditableField
+                    path={`主角.属性.${key}`}
+                    value={value ?? 0}
+                    type="number"
+                    numberConfig={{ min: 0, max: 20, step: 1 }}
+                  />
+                ) : (
+                  <div className={styles.attributesValueRow}>
+                    <span className={styles.attributesValue}>{value ?? 0}</span>
+                    {(player.属性点 ?? 0) > 0 ? (
+                      <button
+                        type="button"
+                        className={styles.attributeAddButton}
+                        onClick={() => handleAllocateAttributePoint(key, Number(value ?? 0))}
+                        title={`分配 1 点到${key}`}
+                      >
+                        +
+                      </button>
+                    ) : null}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </Card>
       </div>

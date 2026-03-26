@@ -52,11 +52,11 @@ const PartnerListCategories: Array<{
   label: string;
   matches: (partner: Record<string, any>) => boolean;
 }> = [
-  { key: 'all', label: '全部', matches: () => true },
-  { key: 'present', label: '在场', matches: partner => Boolean(partner.在场) },
-  { key: 'away', label: '不在场', matches: partner => !partner.在场 },
-  { key: 'contracted', label: '已缔约', matches: partner => Boolean(partner.命定契约) },
-];
+    { key: 'all', label: '全部', matches: () => true },
+    { key: 'present', label: '在场', matches: partner => Boolean(partner.在场) },
+    { key: 'away', label: '不在场', matches: partner => !partner.在场 },
+    { key: 'contracted', label: '已缔约', matches: partner => Boolean(partner.命定契约) },
+  ];
 
 const PartnerAssetSections: PartnerAssetSectionConfig[] = [
   {
@@ -177,17 +177,6 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
       normalizeByPrefix,
     );
   }, [activePartnerAssetSection, activePartnerAssetSource]);
-
-  /**
-   * 处理 FP 商店按钮点击
-   * 发送用户消息"打开FP商店"并触发 AI 回复
-   */
-  const handleOpenFpShop = async () => {
-    // 发送用户消息
-    await createChatMessages([{ role: 'user', message: '打开FP商店' }]);
-    // 触发 AI 回复
-    await triggerSlash('/trigger');
-  };
 
   /**
    * 渲染可编辑字段行
@@ -347,16 +336,16 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
                 option === ALL_FILTER
                   ? totalCount
                   : _.size(
-                      _.pickBy(source, item => {
-                        const rawValue = _.get(item, sectionConfig.filterKey);
-                        const normalizedValue = normalizeByPrefix
-                          ? _.trim(String(rawValue ?? '').split('/')[0] ?? '')
-                          : typeof rawValue === 'string'
-                            ? _.trim(rawValue)
-                            : '';
-                        return normalizedValue === option;
-                      }),
-                    );
+                    _.pickBy(source, item => {
+                      const rawValue = _.get(item, sectionConfig.filterKey);
+                      const normalizedValue = normalizeByPrefix
+                        ? _.trim(String(rawValue ?? '').split('/')[0] ?? '')
+                        : typeof rawValue === 'string'
+                          ? _.trim(rawValue)
+                          : '';
+                      return normalizedValue === option;
+                    }),
+                  );
 
               return (
                 <button
@@ -961,13 +950,6 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
     <div
       className={`${styles.destinyTab} ${isPartnerDetailOpen ? styles.destinyTabDetailModeMobile : ''}`}
     >
-      {/* FP商店按钮（暂时禁用，待正式上线） */}
-      <button className={styles.fpShopBtn} onClick={handleOpenFpShop} disabled title="待上线">
-        <i className="fa-solid fa-store" />
-        <span>FP商店</span>
-        <span className={styles.comingSoonBadge}>待上线</span>
-      </button>
-
       {/* 命运点数 */}
       <Card className={styles.destinyTabPoints}>
         <div className={styles.destinyPoints}>

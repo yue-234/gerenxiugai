@@ -14,54 +14,11 @@
     min-height: 100%;
     height: 100%;
 
-    > .fpShopBtn,
     > .destinyTabPoints,
     > .destinyTabPartners {
       display: none;
     }
   }
-}
-
-// FP商店按钮
-.fpShopBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: $spacing-sm;
-  width: 100%;
-  padding: $spacing-sm $spacing-md;
-  background: var(--theme-card-bg);
-  border: 1px solid var(--theme-card-border);
-  border-radius: $border-radius-sm;
-  color: var(--theme-text-primary);
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.4px;
-  cursor: not-allowed;
-  transition: all $transition-fast;
-
-  &:disabled {
-    opacity: 0.6;
-  }
-
-  i {
-    font-size: 14px;
-    color: var(--theme-tab-indicator);
-  }
-}
-
-// 待上线徽章
-.comingSoonBadge {
-  margin-left: $spacing-xs;
-  padding: 2px 6px;
-  font-size: 10px;
-  font-weight: 500;
-  background: color-mix(in srgb, var(--theme-warning) 18%, transparent);
-  color: var(--theme-warning);
-  border: 1px solid color-mix(in srgb, var(--theme-warning) 36%, transparent);
-  border-radius: 3px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .partnerTitle {

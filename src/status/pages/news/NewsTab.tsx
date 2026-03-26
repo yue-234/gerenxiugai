@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 import { useEditorSettingStore } from '../../core/stores';
-import { Card, EditableField, EmptyHint, IconTitle } from '../../shared/components';
+import { Collapse, EditableField, EmptyHint, IconTitle } from '../../shared/components';
 import { withMvuData, WithMvuDataProps } from '../../shared/hoc';
 import styles from './NewsTab.module.scss';
 
@@ -10,102 +10,90 @@ const NewsCategories = [
   {
     key: '阿斯塔利亚快讯',
     icon: 'fa-solid fa-newspaper',
-    colorClassName: 'categoryAccentNews',
+    color: '#1976d2',
   },
   {
     key: '酒馆留言板',
     icon: 'fa-solid fa-clipboard',
-    colorClassName: 'categoryAccentBoard',
+    color: '#7b1fa2',
   },
   {
     key: '午后茶会',
     icon: 'fa-solid fa-mug-hot',
-    colorClassName: 'categoryAccentTea',
+    color: '#c2185b',
   },
 ] as const;
-
-type NewsCategoryKey = (typeof NewsCategories)[number]['key'];
-
-type NewsFeedEntry = {
-  categoryKey: NewsCategoryKey;
-  icon: string;
-  colorClassName: string;
-  title: string;
-  content: string;
-};
 
 /**
  * 新闻页内容组件
  */
 const NewsTabContent: FC<WithMvuDataProps> = ({ data }) => {
   const { editEnabled } = useEditorSettingStore();
-  const news = data.新闻 ?? {};
+  const news = data.新闻;
 
-  const feedEntries = useMemo<NewsFeedEntry[]>(() => {
-    return NewsCategories.flatMap(category => {
-      const categoryData = _.get(news, category.key, {}) as Record<string, string>;
+  /** 渲染新闻条目 */
+  const renderNewsItems = (categoryKey: string, categoryData: Record<string, string>) => {
+    const entries = _.entries(categoryData);
 
-      return (_.entries(categoryData) as [string, string][])
-        .filter(([, content]) => Boolean(content?.trim()))
-        .map(([title, content]) => ({
-          categoryKey: category.key,
-          icon: category.icon,
-          colorClassName: category.colorClassName,
-          title,
-          content,
-        }));
-    });
-  }, [news]);
+    // 过滤出有内容的条目用于显示判断
+    const hasContent = entries.some(([, value]) => !_.isEmpty(value));
 
-  if (feedEntries.length === 0) {
+    if (!hasContent) {
+      return <EmptyHint className={styles.emptyHint} text="暂无消息" />;
+    }
+
     return (
-      <div className={styles.newsTab}>
-        <Card className={styles.emptyCard} bodyClassName={styles.emptyCardBody}>
-          <EmptyHint className={styles.emptyHint} icon="fa-solid fa-newspaper" text="暂无新闻" />
-        </Card>
-      </div>
-    );
-  }
+      <div className={styles.newsItems}>
+        {entries.map(([title, content]) => {
+          // 跳过空内容的条目
+          if (_.isEmpty(content)) return null;
 
-  return (
-    <div className={styles.newsTab}>
-      <div className={styles.newsFeed}>
-        {feedEntries.map(entry => {
-          const fieldPath = `新闻.${entry.categoryKey}.${entry.title}`;
+          const fieldPath = `新闻.${categoryKey}.${title}`;
 
           return (
-            <Card
-              key={`${entry.categoryKey}-${entry.title}`}
-              className={styles.newsFeedCard}
-              bodyClassName={styles.newsFeedCardBody}
-            >
-              <div className={styles.newsFeedMeta}>
-                <span className={`${styles.newsCategoryBadge} ${styles[entry.colorClassName]}`}>
-                  <i className={entry.icon} />
-                  <span>{entry.categoryKey}</span>
-                </span>
-              </div>
-
-              <div className={styles.newsFeedTitleRow}>
-                <IconTitle text={entry.title} className={styles.newsFeedTitle} as="span" />
-              </div>
-
-              <div className={styles.newsFeedContent}>
+            <div key={title} className={styles.newsItem}>
+              <div className={styles.newsItemTitle}>{title}</div>
+              <div className={styles.newsItemContent}>
                 {editEnabled ? (
                   <EditableField
                     path={fieldPath}
-                    value={entry.content}
+                    value={content}
                     type="textarea"
                     className={styles.editableContent}
                   />
                 ) : (
-                  <span className={styles.newsFeedText}>{entry.content}</span>
+                  <span className={styles.newsItemText}>{content}</span>
                 )}
               </div>
-            </Card>
+            </div>
           );
         })}
       </div>
+    );
+  };
+
+  return (
+    <div className={styles.newsTab}>
+      {NewsCategories.map(category => {
+        const categoryData = _.get(news, category.key, {}) as Record<string, string>;
+
+        return (
+          <Collapse
+            key={category.key}
+            defaultOpen={true}
+            title={
+              <IconTitle
+                icon={category.icon}
+                text={category.key}
+                className={styles.newsCategoryTitle}
+                style={{ color: category.color }}
+              />
+            }
+          >
+            {renderNewsItems(category.key, categoryData)}
+          </Collapse>
+        );
+      })}
     </div>
   );
 };

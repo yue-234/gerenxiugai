@@ -10,6 +10,36 @@
   background: transparent;
 }
 
+.overviewCollapse {
+  width: 100%;
+}
+
+.overviewCollapseTitle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  width: 100%;
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--theme-text-primary);
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.overviewCollapsePrimary,
+.overviewCollapseSecondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.overviewCollapseSecondary {
+  color: var(--theme-text-secondary);
+}
+
 .overviewCard {
   padding-top: 0;
 }
@@ -131,7 +161,104 @@
 }
 
 .primaryGrid {
-  display: block;
+  @include list-container($spacing-sm);
+}
+
+.attributesTitleEdit {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.attributes {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: $spacing-xs;
+}
+
+.attributesEdit {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.attributesItem {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  @include item-bar;
+  border: none;
+}
+
+.attributesItemEdit {
+  flex-direction: row;
+  justify-content: space-between;
+  gap: $spacing-sm;
+}
+
+.attributesLabel {
+  font-size: 11px;
+  color: var(--theme-text-secondary);
+  margin-bottom: 2px;
+  text-align: center;
+}
+
+.attributesItemEdit .attributesLabel {
+  margin-bottom: 0;
+}
+
+.attributesValueRow {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+}
+
+.attributesValue {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--theme-text-primary);
+  text-align: center;
+}
+
+.attributeAddButton {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--theme-card-border) 78%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--theme-card-bg) 88%, transparent);
+  color: var(--theme-text-primary);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition:
+    background $transition-fast,
+    border-color $transition-fast,
+    color $transition-fast,
+    opacity $transition-fast,
+    box-shadow $transition-fast;
+
+  &:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--theme-card-bg) 76%, transparent);
+    border-color: color-mix(in srgb, var(--theme-card-border) 100%, transparent);
+    box-shadow: 0 2px 6px color-mix(in srgb, var(--theme-window-border) 12%, transparent);
+  }
+
+  &:disabled {
+    opacity: 0.42;
+    cursor: not-allowed;
+  }
 }
 
 .secondaryStack {
@@ -181,6 +308,16 @@
   .overviewStatSummary {
     font-size: 12px;
   }
+
+  .overviewCollapseTitle {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .overviewCollapseSecondary {
+    width: 100%;
+  }
 }
 
 // 基础信息
@@ -224,6 +361,24 @@
     grid-template-columns: 1fr;
     gap: 4px;
     padding: 6px 0;
+  }
+
+  .attributes {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .attributesEdit {
+    grid-template-columns: 1fr;
+  }
+
+  .attributesValueRow {
+    gap: 4px;
+  }
+
+  .attributeAddButton {
+    width: 18px;
+    height: 18px;
+    font-size: 13px;
   }
 }
 

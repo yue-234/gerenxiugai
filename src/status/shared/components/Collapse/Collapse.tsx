@@ -1,4 +1,5 @@
-import { FC, ReactNode, useState } from 'react';
+import { FC, ReactNode, useEffect, useState } from 'react';
+import { readSessionState, writeSessionState } from '../../../core/utils';
 import styles from './Collapse.module.scss';
 
 export interface CollapseProps {
@@ -7,6 +8,7 @@ export interface CollapseProps {
   defaultOpen?: boolean;
   className?: string;
   quality?: string;
+  storageKey?: string;
 }
 
 // 品质样式映射
@@ -28,8 +30,16 @@ export const Collapse: FC<CollapseProps> = ({
   defaultOpen = false,
   className = '',
   quality,
+  storageKey,
 }) => {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
+  const [isOpen, setIsOpen] = useState(() =>
+    storageKey ? readSessionState<boolean>(storageKey, defaultOpen) : defaultOpen,
+  );
+
+  useEffect(() => {
+    if (!storageKey) return;
+    writeSessionState(storageKey, isOpen);
+  }, [isOpen, storageKey]);
 
   const qualityClass = quality && qualityStyleMap[quality] ? styles[qualityStyleMap[quality]] : '';
   const openClass = isOpen ? styles.open : '';

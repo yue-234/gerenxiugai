@@ -185,15 +185,10 @@ const QuestsTabContent: FC<WithMvuDataProps> = ({ data }) => {
     useDeleteConfirm();
 
   const statusStorageKey = buildSessionKey('quests', 'active-status');
-  const focusStorageKey = buildSessionKey('quests', 'focus-quest');
-
   const [activeStatus, setActiveStatus] = useState<string>(() =>
     readSessionState<string>(statusStorageKey, ALL_STATUS),
   );
   const [inspectQuest, setInspectQuest] = useState<InspectQuestState>(null);
-  const [focusQuestName, setFocusQuestName] = useState<string>(() =>
-    readSessionState<string>(focusStorageKey, ''),
-  );
 
   const quests = data.任务列表 ?? {};
   const questEntries = useMemo(() => _.entries(quests) as [string, Task][], [quests]);
@@ -244,38 +239,6 @@ const QuestsTabContent: FC<WithMvuDataProps> = ({ data }) => {
     }, {});
   }, [questEntries, statusOptions]);
 
-  const focusQuestOptions = useMemo(() => {
-    return _.orderBy(
-      questEntries,
-      [([, quest]) => PriorityRankMap[quest.关注度 ?? '中'] ?? 99, ([name]) => name.toLowerCase()],
-      ['asc', 'asc'],
-    );
-  }, [questEntries]);
-
-  const featuredQuestEntry = useMemo(() => {
-    if (!focusQuestName) {
-      return null;
-    }
-
-    return questEntries.find(([name]) => name === focusQuestName) ?? null;
-  }, [focusQuestName, questEntries]);
-
-  useEffect(() => {
-    if (!focusQuestName) {
-      writeSessionState(focusStorageKey, '');
-      return;
-    }
-
-    const exists = questEntries.some(([name]) => name === focusQuestName);
-    if (!exists) {
-      setFocusQuestName('');
-      writeSessionState(focusStorageKey, '');
-      return;
-    }
-
-    writeSessionState(focusStorageKey, focusQuestName);
-  }, [focusQuestName, focusStorageKey, questEntries]);
-
   useEffect(() => {
     writeSessionState(statusStorageKey, activeStatus);
   }, [activeStatus, statusStorageKey]);
@@ -294,89 +257,6 @@ const QuestsTabContent: FC<WithMvuDataProps> = ({ data }) => {
 
   return (
     <div className={styles.questsTab}>
-      <Card className={styles.overviewCard} bodyClassName={styles.overviewCardBody}>
-        <div className={styles.overviewHeader}>
-          <IconTitle
-            icon="fa-solid fa-list-check"
-            text="任务态势"
-            className={styles.overviewTitle}
-            as="span"
-          />
-        </div>
-
-        <div className={styles.overviewStats}>
-          {statusOptions.map(status => (
-            <div key={status} className={styles.overviewStatItem}>
-              <span className={styles.overviewStatLabel}>{status}</span>
-              <span className={styles.overviewStatValue}>{statusCountMap[status] ?? 0}</span>
-            </div>
-          ))}
-        </div>
-
-        <div className={styles.overviewFocus}>
-          <div className={styles.overviewFocusHeader}>
-            <span className={styles.overviewFocusLabel}>当前焦点</span>
-            {focusQuestName ? (
-              <button
-                type="button"
-                className={styles.focusClearButton}
-                onClick={() => setFocusQuestName('')}
-              >
-                清空
-              </button>
-            ) : null}
-          </div>
-
-          {questEntries.length > 0 ? (
-            <div className={styles.overviewFocusControls}>
-              <label className={styles.overviewFocusSelectLabel} htmlFor="quest-focus-select">
-                选择焦点任务
-              </label>
-              <select
-                id="quest-focus-select"
-                className={styles.overviewFocusSelect}
-                value={focusQuestName}
-                onChange={event => setFocusQuestName(event.target.value)}
-              >
-                <option value="">未设置</option>
-                {focusQuestOptions.map(([name]) => (
-                  <option key={name} value={name}>
-                    {name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          ) : null}
-
-          {featuredQuestEntry ? (
-            <div className={styles.overviewFocusContent}>
-              <div className={styles.overviewFocusLine}>
-                <span className={styles.overviewFocusLineLabel}>目标</span>
-                <span className={styles.overviewFocusText}>
-                  {featuredQuestEntry[1].目标 || '暂无目标'}
-                </span>
-              </div>
-              <div className={styles.overviewFocusLine}>
-                <span className={styles.overviewFocusLineLabel}>进展</span>
-                <span
-                  className={
-                    featuredQuestEntry[1].进展
-                      ? styles.overviewFocusText
-                      : styles.overviewFocusTextEmpty
-                  }
-                >
-                  {featuredQuestEntry[1].进展 || '暂无进展'}
-                </span>
-              </div>
-            </div>
-          ) : (
-            <span className={styles.overviewFocusEmpty}>
-              {questEntries.length === 0 ? '暂无任务焦点' : '请在上方选择一个任务作为焦点'}
-            </span>
-          )}
-        </div>
-      </Card>
-
       {statusOptions.length > 1 ? (
         <div className={styles.statusFilterBar}>
           {statusOptions.map(status => (
