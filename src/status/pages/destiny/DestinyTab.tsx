@@ -52,11 +52,11 @@ const PartnerListCategories: Array<{
   label: string;
   matches: (partner: Record<string, any>) => boolean;
 }> = [
-    { key: 'all', label: '全部', matches: () => true },
-    { key: 'present', label: '在场', matches: partner => Boolean(partner.在场) },
-    { key: 'away', label: '不在场', matches: partner => !partner.在场 },
-    { key: 'contracted', label: '已缔约', matches: partner => Boolean(partner.命定契约) },
-  ];
+  { key: 'all', label: '全部', matches: () => true },
+  { key: 'present', label: '在场', matches: partner => Boolean(partner.在场) },
+  { key: 'away', label: '不在场', matches: partner => !partner.在场 },
+  { key: 'contracted', label: '已缔约', matches: partner => Boolean(partner.命定契约) },
+];
 
 const PartnerAssetSections: PartnerAssetSectionConfig[] = [
   {
@@ -336,16 +336,16 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
                 option === ALL_FILTER
                   ? totalCount
                   : _.size(
-                    _.pickBy(source, item => {
-                      const rawValue = _.get(item, sectionConfig.filterKey);
-                      const normalizedValue = normalizeByPrefix
-                        ? _.trim(String(rawValue ?? '').split('/')[0] ?? '')
-                        : typeof rawValue === 'string'
-                          ? _.trim(rawValue)
-                          : '';
-                      return normalizedValue === option;
-                    }),
-                  );
+                      _.pickBy(source, item => {
+                        const rawValue = _.get(item, sectionConfig.filterKey);
+                        const normalizedValue = normalizeByPrefix
+                          ? _.trim(String(rawValue ?? '').split('/')[0] ?? '')
+                          : typeof rawValue === 'string'
+                            ? _.trim(rawValue)
+                            : '';
+                        return normalizedValue === option;
+                      }),
+                    );
 
               return (
                 <button
