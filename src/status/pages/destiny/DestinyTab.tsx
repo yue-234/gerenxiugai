@@ -63,7 +63,7 @@ const PartnerAssetSections: PartnerAssetSectionConfig[] = [
     key: 'equipment',
     label: '装备',
     dataKey: '装备',
-    filterKey: '位置',
+    filterKey: '类型',
     itemCategory: 'equipment',
     emptyText: '暂无装备',
     getTitleSuffix: item =>
@@ -154,21 +154,27 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
   const activePartnerAssetEntries = useMemo(() => {
     if (!activePartnerAssetSection) return [];
 
+    const normalizeByPrefix = activePartnerAssetSection.key === 'inventory';
+
     return getFilteredAssetEntries(
       activePartnerAssetSource,
       activePartnerAssetSection.filterKey,
       activePartnerAssetFilter,
       ALL_FILTER,
+      normalizeByPrefix,
     );
   }, [activePartnerAssetFilter, activePartnerAssetSection, activePartnerAssetSource]);
 
   const activePartnerAssetFilterOptions = useMemo(() => {
     if (!activePartnerAssetSection) return [ALL_FILTER];
 
+    const normalizeByPrefix = activePartnerAssetSection.key === 'inventory';
+
     return getAssetFilterOptions(
       activePartnerAssetSource,
       activePartnerAssetSection.filterKey,
       ALL_FILTER,
+      normalizeByPrefix,
     );
   }, [activePartnerAssetSection, activePartnerAssetSource]);
 
