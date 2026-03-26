@@ -491,21 +491,70 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
     return _.compact(roleParts).join(' · ') || '暂无定位';
   };
 
+  const getPartnerDesktopSummaryText = (_partner: Record<string, any>) => '';
+
+  const getPartnerMobileSummaryText = (partner: Record<string, any>) => {
+    const roleParts = [
+      partner.种族,
+      Array.isArray(partner.职业) ? partner.职业.join(' / ') : partner.职业,
+      partner.等级 ? `Lv.${partner.等级}` : '',
+      partner.生命层级,
+    ];
+
+    return _.compact(roleParts).join(' · ') || '暂无定位';
+  };
+
   const getPartnerStatusSummary = (partner: Record<string, any>) => {
     const effects = (partner.状态效果 ?? {}) as Parameters<
       typeof StatusEffectDisplay
     >[0]['effects'];
+    const counts = Object.values(effects).reduce(
+      (acc, effect) => {
+        if (effect?.类型 === '增益') {
+          acc.buff += 1;
+        } else if (effect?.类型 === '减益') {
+          acc.debuff += 1;
+        } else {
+          acc.special += 1;
+        }
+
+        return acc;
+      },
+      { buff: 0, debuff: 0, special: 0 },
+    );
+
+    const totalCount = counts.buff + counts.debuff + counts.special;
+
+    if (totalCount === 0) {
+      return <span className={styles.partnerStatusEmpty}>暂无BUFF</span>;
+    }
 
     return (
       <div className={styles.partnerSummaryStatusRow}>
-        <StatusEffectDisplay
-          effects={effects}
-          mode="chips"
-          compact
-          maxVisible={3}
-          showRemainingCount
-          emptyText="暂无 Buff"
-        />
+        {counts.buff > 0 ? (
+          <span
+            className={`${styles.partnerStatusCount} ${styles.partnerStatusCountBuff}`}
+            title={`增益 ${counts.buff}`}
+          >
+            {counts.buff}
+          </span>
+        ) : null}
+        {counts.debuff > 0 ? (
+          <span
+            className={`${styles.partnerStatusCount} ${styles.partnerStatusCountDebuff}`}
+            title={`减益 ${counts.debuff}`}
+          >
+            {counts.debuff}
+          </span>
+        ) : null}
+        {counts.special > 0 ? (
+          <span
+            className={`${styles.partnerStatusCount} ${styles.partnerStatusCountSpecial}`}
+            title={`特殊 ${counts.special}`}
+          >
+            {counts.special}
+          </span>
+        ) : null}
       </div>
     );
   };
@@ -561,7 +610,12 @@ const DestinyTabContent: FC<WithMvuDataProps> = ({ data }) => {
 
       <div className={styles.partnerSummaryMain}>
         {renderPartnerSummary(partnerName, partner, styles.partnerName)}
-        <div className={styles.partnerSummaryText}>{getPartnerSummaryText(partner)}</div>
+        <div className={`${styles.partnerSummaryText} ${styles.partnerSummaryTextDesktop}`}>
+          {getPartnerDesktopSummaryText(partner)}
+        </div>
+        <div className={`${styles.partnerSummaryText} ${styles.partnerSummaryTextMobile}`}>
+          {getPartnerMobileSummaryText(partner)}
+        </div>
         <div className={styles.partnerSummaryStatus}>{getPartnerStatusSummary(partner)}</div>
       </div>
     </div>

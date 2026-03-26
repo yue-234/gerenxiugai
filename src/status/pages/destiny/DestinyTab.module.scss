@@ -229,7 +229,7 @@
 .partnerMasterDetail {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(140px, 180px) minmax(0, 1fr);
+  grid-template-columns: minmax(190px, 240px) minmax(0, 1fr);
   gap: $spacing-md;
   align-items: start;
 }
@@ -252,8 +252,8 @@
 }
 
 .partnerSummaryCard {
-  padding: 10px 12px;
-  min-height: 42px;
+  padding: $spacing-md;
+  min-height: 0;
   border-radius: $border-radius-sm;
   border: 1px solid color-mix(in srgb, var(--theme-card-border) 72%, transparent);
   background: color-mix(in srgb, var(--theme-card-bg) 86%, transparent);
@@ -281,13 +281,25 @@
 }
 
 .partnerSummaryCompact {
-  display: block;
+  display: none;
 }
 
 .partnerSummaryMain {
   @include list-container(8px);
   min-width: 0;
-  display: none;
+  display: flex;
+
+  .partnerTitleMain {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding-right: 0;
+  }
+
+  .partnerMeta {
+    width: 100%;
+    justify-content: flex-start;
+  }
 }
 
 .partnerSummaryText {
@@ -296,6 +308,14 @@
   line-height: 1.6;
   white-space: pre-line;
   word-break: break-word;
+}
+
+.partnerSummaryTextDesktop {
+  display: none;
+}
+
+.partnerSummaryTextMobile {
+  display: none;
 }
 
 .partnerSummaryStatus {
@@ -307,17 +327,48 @@
   align-items: center;
   gap: 6px;
   min-width: 0;
+  flex-wrap: wrap;
 }
 
-.partnerSummaryStatusMore {
-  flex-shrink: 0;
-  padding: 2px 6px;
+.partnerStatusCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--theme-card-border) 70%, transparent);
-  background: color-mix(in srgb, var(--theme-card-bg) 78%, transparent);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  border: 1px solid color-mix(in srgb, var(--theme-card-border) 72%, transparent);
+}
+
+.partnerStatusCountBuff {
+  color: var(--theme-success);
+  border-color: color-mix(in srgb, var(--theme-success) 42%, var(--theme-card-border) 58%);
+  background: color-mix(in srgb, var(--theme-success) 12%, var(--theme-card-bg) 88%);
+}
+
+.partnerStatusCountDebuff {
+  color: var(--theme-error);
+  border-color: color-mix(in srgb, var(--theme-error) 42%, var(--theme-card-border) 58%);
+  background: color-mix(in srgb, var(--theme-error) 12%, var(--theme-card-bg) 88%);
+}
+
+.partnerStatusCountSpecial {
+  color: var(--theme-warning);
+  border-color: color-mix(in srgb, var(--theme-warning) 42%, var(--theme-card-border) 58%);
+  background: color-mix(in srgb, var(--theme-warning) 12%, var(--theme-card-bg) 88%);
+}
+
+.partnerStatusEmpty {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  font-size: 11px;
   color: var(--theme-text-muted);
-  font-size: 10px;
-  line-height: 1.2;
+  line-height: 1.3;
 }
 
 .partnerDetailPanel {
@@ -491,14 +542,8 @@
 
 .partnerOverviewStats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: minmax(0, 2fr) minmax(220px, 1fr);
   gap: $spacing-sm;
-}
-
-@media (max-width: 760px) {
-  .partnerOverviewStats {
-    grid-template-columns: 1fr;
-  }
 }
 
 .partnerInfoPanel {
@@ -510,19 +555,6 @@
 }
 
 @media (max-width: 900px) {
-  .partnerSummaryCard {
-    padding: $spacing-md;
-    min-height: 0;
-  }
-
-  .partnerSummaryCompact {
-    display: none;
-  }
-
-  .partnerSummaryMain {
-    display: flex;
-  }
-
   .partnerCategoryBar {
     flex-wrap: nowrap;
     gap: 8px;
@@ -552,6 +584,25 @@
 
   .partnerDetailPanel {
     display: none;
+  }
+
+  .partnerSummaryMain {
+    .partnerTitleMain {
+      gap: $spacing-xs;
+      padding-right: 32px;
+    }
+
+    .partnerMeta {
+      width: auto;
+    }
+  }
+
+  .partnerSummaryTextDesktop {
+    display: none;
+  }
+
+  .partnerSummaryTextMobile {
+    display: block;
   }
 
   .partnerDetailPageMobile {
