@@ -56,7 +56,6 @@ type CategoryId = (typeof ItemCategories)[number]['id'];
 type InspectItemState = {
   categoryId: CategoryId;
   name: string;
-  data: ItemData;
 } | null;
 
 /** 全部筛选项 */
@@ -110,6 +109,10 @@ const ItemsTabContent: FC<WithMvuDataProps> = ({ data }) => {
   );
 
   const inspectCategoryConfig = inspectItem ? getCategoryConfig(inspectItem.categoryId) : null;
+  const inspectItemData =
+    inspectItem && inspectCategoryConfig
+      ? (_.get(player, `${inspectCategoryConfig.label}.${inspectItem.name}`) as ItemData | undefined)
+      : null;
 
   useEffect(() => {
     if (activeCategoryConfig.id !== activeCategory) {
@@ -200,11 +203,10 @@ const ItemsTabContent: FC<WithMvuDataProps> = ({ data }) => {
     setInspectItem(null);
   };
 
-  const handleInspectItem = (name: string, item: ItemData) => {
+  const handleInspectItem = (name: string) => {
     setInspectItem({
       categoryId: activeCategory,
       name,
-      data: item,
     });
   };
 
@@ -263,7 +265,7 @@ const ItemsTabContent: FC<WithMvuDataProps> = ({ data }) => {
             onDelete={() => handleDeleteItem(name)}
             itemCategory={activeCategoryConfig.itemCategory}
             displayMode="panel-card"
-            onInspect={() => handleInspectItem(name, item)}
+            onInspect={() => handleInspectItem(name)}
           />
         ))}
       </div>
@@ -365,19 +367,19 @@ const ItemsTabContent: FC<WithMvuDataProps> = ({ data }) => {
         }
         onClose={handleCloseInspect}
       >
-        {inspectItem && inspectCategoryConfig ? (
+        {inspectItem && inspectCategoryConfig && inspectItemData ? (
           <ItemDetail
             name={inspectItem.name}
-            data={inspectItem.data}
+            data={inspectItemData}
             titleSuffix={
               inspectCategoryConfig.itemCategory === 'item' ? (
-                <span className={styles.itemCount}>×{inspectItem.data.数量}</span>
+                <span className={styles.itemCount}>×{inspectItemData.数量}</span>
               ) : inspectCategoryConfig.itemCategory === 'equipment' ? (
-                inspectItem.data.位置 ? (
-                  <span className={styles.itemSlot}>[{inspectItem.data.位置}]</span>
+                inspectItemData.位置 ? (
+                  <span className={styles.itemSlot}>[{inspectItemData.位置}]</span>
                 ) : null
-              ) : inspectItem.data.消耗 ? (
-                <span className={styles.itemCost}>{inspectItem.data.消耗}</span>
+              ) : inspectItemData.消耗 ? (
+                <span className={styles.itemCost}>{inspectItemData.消耗}</span>
               ) : null
             }
             editEnabled={editEnabled}
