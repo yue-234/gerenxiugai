@@ -10,12 +10,13 @@ const App: FC = () => {
 
   const { loadSettings } = useEditorSettingStore();
   const { loadTheme } = useThemeStore();
-  const { data } = useMvuDataStore();
+  const { data, refresh } = useMvuDataStore();
 
   useEffect(() => {
     loadSettings();
     loadTheme();
-  }, [loadSettings, loadTheme]);
+    refresh();
+  }, [loadSettings, loadTheme, refresh]);
 
   /** 带 badge 的 Tab 配置 */
   const tabsWithBadge = useMemo(() => {
