@@ -5,6 +5,7 @@
   padding: 0 $spacing-md;
   border-bottom: 1px solid color-mix(in srgb, var(--theme-window-border) 62%, transparent);
   overflow-x: auto;
+  overflow-y: hidden;
   position: relative;
   @include custom-scrollbar(var(--theme-tab-indicator), 6px);
 }
