@@ -111,7 +111,9 @@ const ItemsTabContent: FC<WithMvuDataProps> = ({ data }) => {
   const inspectCategoryConfig = inspectItem ? getCategoryConfig(inspectItem.categoryId) : null;
   const inspectItemData =
     inspectItem && inspectCategoryConfig
-      ? (_.get(player, `${inspectCategoryConfig.label}.${inspectItem.name}`) as ItemData | undefined)
+      ? (_.get(player, `${inspectCategoryConfig.label}.${inspectItem.name}`) as
+          | ItemData
+          | undefined)
       : null;
 
   useEffect(() => {
